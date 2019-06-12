@@ -5,3 +5,5 @@ import numpy as np
 
 from FE_code.model import Model
 
+#TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
+
