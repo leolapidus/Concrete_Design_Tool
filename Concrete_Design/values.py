@@ -86,6 +86,8 @@ class Values:
                 )
 
         d = model.h - d1
+        
+        return d
 
     def design_table_values(self):
         
