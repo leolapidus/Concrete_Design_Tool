@@ -11,7 +11,7 @@ from Concrete_Design.values import Values
 #TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
 
 
-def m_eds(model, values, concrete_type):
+def m_eds(model, values, concrete_type, EXP):
     m = []
     erf_As = []
     c = values.concrete(concrete_type)
@@ -24,7 +24,7 @@ def m_eds(model, values, concrete_type):
 
             b = ele.b
             h = ele.h 
-            #fcd = float(_fcd)
+            _calculate_concrete_cover = values.concrete_cover(EXP)
             
 
             mue_eds = m_ed/(b*(values.static_usable_height(h)**2)*fcd)
@@ -38,6 +38,9 @@ def m_eds(model, values, concrete_type):
             sigma = values.interpolate_sigma(mue_eds)
 
             erf_As.append(1/sigma*(omega*b*values.static_usable_height(h)*fcd)*10000) # cm²
+
+            del m[0]
+            del m[0]
     
     print(erf_As)
     return erf_As
