@@ -1,5 +1,7 @@
 from FE_code.model import Model
 from Visualization.plot import Plot2D
+from Concrete_Design.bending_without_n import m_eds
+from Concrete_Design.values import Values
 
 
 
@@ -67,7 +69,12 @@ model.calculate_internal_forces()
 
 plot = Plot2D()
                 
-plot.geometry(model=model)
-#plot.plot_geometry()
-plot.internal_forces(model=model)
-plot.plot_internal_forces()
+# plot.geometry(model=model)
+# #plot.plot_geometry()
+# plot.internal_forces(model=model)
+# plot.plot_internal_forces()
+
+
+
+values = Values()
+m_eds(model=model, values=values, concrete_type='c3037')
