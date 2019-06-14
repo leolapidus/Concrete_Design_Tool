@@ -12,6 +12,9 @@ class Values:
         self._dbu = 0
         self.c_nom_l = 0
         self.c_nom_b = 0
+        self.mue_eds = []
+        self.omega_1 = []
+        self.sigma_sd = []
 
     @property
     def dsl(self):
@@ -80,3 +83,58 @@ class Values:
                 )
 
         d = model.h - d1
+
+    def design_table_values(self):
+        
+        for i in range(41):
+            self.mue_eds.append(0.01*i)
+        
+        self.omega_1 = [0.0000, 0.0101, 0.0203, 0.0306, 0.0410, 0.0515,
+                        0.0621, 0.0728, 0.0836, 0.0946, 0.1058, 0.1170,
+                        0.1285, 0.1401, 0.1519, 0.1638, 0.1759, 0.1882,
+                        0.2007, 0.2134, 0.2263, 0.2395, 0.2529, 0.2665, 
+                        0.2804, 0.2946, 0.3091, 0.3239, 0.3391, 0.3546, 
+                        0.3706, 0.3869, 0.4038, 0.4211, 0.4391, 0.4576, 
+                        0.4768, 0.4968, 0.5177, 0.5396, 0.5627 
+                        ]
+
+        self.sigma_sd = [456.5, 456.5, 456.5, 456.5, 456.5, 456.5, 
+                         456.5, 456.5, 456.5, 456.5, 454.9, 452.4, 
+                         450.4, 448.6, 447.1, 445.9, 444.7, 443.7, 
+                         442.8, 442.0, 441.3, 440.6, 440.1, 439.5, 
+                         439.0, 438.4, 438.1, 437.7, 437.3, 437.0, 
+                         436.7, 436.4, 436.1, 435.8, 435.5, 435.3, 
+                         435.0, 434.8, 394.5, 350.1, 307.1  
+                        ]
+
+    def interpolate_omega(self, value):
+        # interpolation of mue_eds
+        i_0, i_1 = None, None
+        for i, mue in enumerate(self.mue_eds):
+            if mue > value:
+                i_1 = i
+                i_0 = i-1
+                break
+
+        if not i_0 or i_0 <0:
+            raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
+
+        omega = self.omega_1[i_0] + (self.omega_1[i_1]-self.omega_1[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
+
+        return omega
+
+    def interpolate_sigma(self, value):
+        # interpolation of mue_eds
+        i_0, i_1 = None, None
+        for i, mue in enumerate(self.mue_eds):
+            if mue > value:
+                i_1 = i
+                i_0 = i-1
+                break
+
+        if not i_0 or i_0 <0:
+            raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
+
+        sigma = self.sigma_sd[i_0] + (self.sigma_sd[i_1]-self.sigma_sd[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
+
+        return sigma
