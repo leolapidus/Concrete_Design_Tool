@@ -69,12 +69,12 @@ model.calculate_internal_forces()
 
 plot = Plot2D()
                 
-# plot.geometry(model=model)
+plot.geometry(model=model)
 # #plot.plot_geometry()
-# plot.internal_forces(model=model)
-# plot.plot_internal_forces()
+plot.internal_forces(model=model)
+plot.plot_internal_forces()
 
 
 
 values = Values()
-m_eds(model=model, values=values, concrete_type='c3037')
+m_eds(model=model, values=values, concrete_type='c3037', EXP='XD1')
