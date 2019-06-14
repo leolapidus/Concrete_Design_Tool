@@ -58,8 +58,8 @@ class Values:
         c_min_l = max(c_min_l, c_min_dur+d_c_dury, 10)
         c_min_b = max(c_min_b, c_min_dur+d_c_dury, 10)
 
-        c_nom_l = c_min_l + d_c_dev
-        c_nom_b = c_min_b + d_c_dev
+        self.c_nom_l = c_min_l + d_c_dev
+        self.c_nom_b = c_min_b + d_c_dev
 
     def static_usable_height(self, model):
 
