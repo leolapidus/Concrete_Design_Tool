@@ -27,6 +27,18 @@ class Values:
     def dbu(self, value):
         self._dbu = value
 
+    def concrete(self):
+        
+        c1215 = dict(('fck', 12), ('fctm', 1.6), ('fctk,0.05', 1.1), ('Ecm', 27000))
+        c1620 = dict(('fck', 16), ('fctm', 1.9), ('fctk,0.05', 1.3), ('Ecm', 29000))
+        c2025 = dict(('fck', 20), ('fctm', 2.2), ('fctk,0.05', 1.5), ('Ecm', 30000))
+        c2530 = dict(('fck', 25), ('fctm', 2.6), ('fctk,0.05', 1.8), ('Ecm', 31000))
+        c3037 = dict(('fck', 30), ('fctm', 2.9), ('fctk,0.05', 2.0), ('Ecm', 33000))
+        c3545 = dict(('fck', 35), ('fctm', 3.2), ('fctk,0.05', 2.2), ('Ecm', 34000))
+        c4050 = dict(('fck', 40), ('fctm', 3.5), ('fctk,0.05', 2.5), ('Ecm', 35000))
+        c4555 = dict(('fck', 45), ('fctm', 3.8), ('fctk,0.05', 2.7), ('Ecm', 36000))
+        c5060 = dict(('fck', 50), ('fctm', 4.1), ('fctk,0.05', 2.9), ('Ecm', 37000))
+
 
     def concrete_cover(self, EXP):
 
