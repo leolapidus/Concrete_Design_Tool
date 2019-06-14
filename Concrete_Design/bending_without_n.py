@@ -25,7 +25,7 @@ def m_eds(model, values):
             m.append(ele.local_internal_forces[5]*-1)
             m_ed = abs(max(m))
             
-            mue_eds = m_ed/(model.b*values.static_usable_height**2*fcd)
+            mue_eds = m_ed/(model.b*values.static_usable_height(model)**2*fcd)
 
             print(mue_eds)
 

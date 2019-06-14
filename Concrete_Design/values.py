@@ -43,7 +43,9 @@ class Values:
         c5060 = dict(('fck', 50), ('fcd', 0.85*50/1.5), ('fctm', 4.1), ('fctk,0.05', 2.9), ('Ecm', 37000))
 
     def steel(self):
-        pass
+        fyk = 500
+
+        return fyk
 
 
     def concrete_cover(self, EXP):
