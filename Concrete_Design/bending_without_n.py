@@ -7,35 +7,38 @@ from FE_code.model import Model
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.values import Values 
 
+
 #TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
 
-@property
-def fcd(values, concrete_type):
-    fcd = values.concrete.concrete_type['fcd']
-    
-    return fcd
 
-
-def m_eds(model, values):
+def m_eds(model, values, concrete_type):
     m = []
     erf_As = []
+    c = values.concrete(concrete_type)
+    fcd = c['fcd']
     for ele in model.elements:
         if type(ele)==BeamColumnElement:
             m.append(ele.local_internal_forces[2])
             m.append(ele.local_internal_forces[5]*-1)
-            m_ed = abs(max(m))
+            m_ed = abs(max(m))*0.001
+
+            b = ele.b
+            h = ele.h 
+            #fcd = float(_fcd)
             
 
-            mue_eds = m_ed/(model.b*values.static_usable_height(model)**2*fcd)
+            mue_eds = m_ed/(b*(values.static_usable_height(h)**2)*fcd)
 
 
             print(mue_eds)
 
+            table=values.design_table_values()
+
             omega = values.interpolate_omega(mue_eds)
             sigma = values.interpolate_sigma(mue_eds)
 
-            erf_As.append(1/sigma*(omega*model.b*values.static_usable_height*fcd)*10000) # cm²
+            erf_As.append(1/sigma*(omega*b*values.static_usable_height(h)*fcd)*10000) # cm²
     
-
+    print(erf_As)
     return erf_As
 
