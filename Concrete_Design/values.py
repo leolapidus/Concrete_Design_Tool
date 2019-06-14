@@ -31,17 +31,28 @@ class Values:
     def dbu(self, value):
         self._dbu = value
 
-    def concrete(self):
-        
-        c1215 = dict(('fck', 12), ('fcd', 0.85*12/1.5), ('fctm', 1.6), ('fctk,0.05', 1.1), ('Ecm', 27000))
-        c1620 = dict(('fck', 16), ('fcd', 0.85*16/1.5), ('fctm', 1.9), ('fctk,0.05', 1.3), ('Ecm', 29000))
-        c2025 = dict(('fck', 20), ('fcd', 0.85*20/1.5), ('fctm', 2.2), ('fctk,0.05', 1.5), ('Ecm', 30000))
-        c2530 = dict(('fck', 25), ('fcd', 0.85*25/1.5), ('fctm', 2.6), ('fctk,0.05', 1.8), ('Ecm', 31000))
-        c3037 = dict(('fck', 30), ('fcd', 0.85*30/1.5), ('fctm', 2.9), ('fctk,0.05', 2.0), ('Ecm', 33000))
-        c3545 = dict(('fck', 35), ('fcd', 0.85*35/1.5), ('fctm', 3.2), ('fctk,0.05', 2.2), ('Ecm', 34000))
-        c4050 = dict(('fck', 40), ('fcd', 0.85*40/1.5), ('fctm', 3.5), ('fctk,0.05', 2.5), ('Ecm', 35000))
-        c4555 = dict(('fck', 45), ('fcd', 0.85*45/1.5), ('fctm', 3.8), ('fctk,0.05', 2.7), ('Ecm', 36000))
-        c5060 = dict(('fck', 50), ('fcd', 0.85*50/1.5), ('fctm', 4.1), ('fctk,0.05', 2.9), ('Ecm', 37000))
+    def concrete(self, concrete_type):
+
+        if concrete_type == 'c1215':
+            c = {'fck': 12, 'fcd': 0.85*12/1.5, 'fctm': 1.6, 'fctk,0.05': 1.1, 'Ecm': 27000}
+        elif concrete_type == 'c1620':
+            c = {'fck': 16, 'fcd': 0.85*16/1.5, 'fctm': 1.9, 'fctk,0.05': 1.3, 'Ecm': 29000}
+        elif concrete_type == 'c2025':
+            c = {'fck': 20, 'fcd': 0.85*20/1.5, 'fctm': 2.2, 'fctk,0.05': 1.5, 'Ecm': 30000}
+        elif concrete_type == 'c2530':
+            c = {'fck': 25, 'fcd': 0.85*25/1.5, 'fctm': 2.6, 'fctk,0.05': 1.8, 'Ecm': 31000}
+        elif concrete_type == 'c3037':
+            c = {'fck': 30, 'fcd': 0.85*30/1.5, 'fctm': 2.9, 'fctk,0.05': 2.0, 'Ecm': 33000}
+        elif concrete_type == 'c3545':
+            c = {'fck': 35, 'fcd': 0.85*35/1.5, 'fctm': 3.2, 'fctk,0.05': 2.2, 'Ecm': 34000}
+        elif concrete_type == 'c4050':
+            c = {'fck': 40, 'fcd': 0.85*40/1.5, 'fctm': 3.5, 'fctk,0.05': 2.5, 'Ecm': 35000}
+        elif concrete_type == 'c4555':
+            c = {'fck': 45, 'fcd': 0.85*45/1.5, 'fctm': 3.8, 'fctk,0.05': 2.7, 'Ecm': 36000}
+        elif concrete_type == 'c5060':
+            c = {'fck': 50, 'fcd': 0.85*50/1.5, 'fctm': 4.1, 'fctk,0.05': 2.9, 'Ecm': 37000}
+
+        return c
 
     def steel(self):
         fyk = 500
@@ -82,13 +93,13 @@ class Values:
         self.c_nom_l = c_min_l + d_c_dev
         self.c_nom_b = c_min_b + d_c_dev
 
-    def static_usable_height(self, model):
+    def static_usable_height(self, h):
 
         d1 = max(self._dsl/2 + self.c_nom_l, 
                  self._dsl/2 + self._dbu + self.c_nom_b
                 )
 
-        d = model.h - d1
+        d = h - d1
         
         return d
 
@@ -114,9 +125,11 @@ class Values:
                          436.7, 436.4, 436.1, 435.8, 435.5, 435.3, 
                          435.0, 434.8, 394.5, 350.1, 307.1  
                         ]
+        #return self.mue_eds, self.omega_1, self.sigma_sd
 
     def interpolate_omega(self, value):
         # interpolation of mue_eds
+       
         i_0, i_1 = None, None
         for i, mue in enumerate(self.mue_eds):
             if mue > value:
@@ -124,8 +137,8 @@ class Values:
                 i_0 = i-1
                 break
 
-        if not i_0 or i_0 <0:
-            raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
+        # if i_1 or i_0 <=-5:
+        #     raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
 
         omega = self.omega_1[i_0] + (self.omega_1[i_1]-self.omega_1[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
 
@@ -140,13 +153,13 @@ class Values:
                 i_0 = i-1
                 break
 
-        if not i_0 or i_0 <0:
-            raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
+        # if not i_0 or i_0 <0:
+        #     raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
 
         sigma = self.sigma_sd[i_0] + (self.sigma_sd[i_1]-self.sigma_sd[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
 
         return sigma
-=======
+
 #TODO: Betondeckung in Abhängigkeit von den Expositionsklassen
 #Druck
 # fcd = 0.85*fck/1,5
