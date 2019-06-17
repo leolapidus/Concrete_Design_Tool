@@ -8,23 +8,90 @@ from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.values import Values 
 
 
-@property
-def fctm(values, concrete_type):
-    fctm = values.concrete.concrete_type['fctm']
+# @property
+# def fctm(values, concrete_type):
+#     fctm = values.concrete.concrete_type['fctm']
     
-    return fctm
+#     return fctm
 
-@property
-def fyk(values):
-    fyk = values.steel
+# @property
+# def fyk(values):
+#     fyk = values.steel
     
-    return fyk
+#     return fyk
 
-def minimal_shear_reinforcement(values, s, model):
+def minimal_shear_reinforcement(values, model, concrete_type, b):
+
+    c = values.concrete(concrete_type)
+    fctm = c['fctm']
+
+    fyk = values.steel()
+
+   
     rho_w_min = 0.16*fctm/fyk
+    asw_min = rho_w_min*b
+    print(asw_min)
+    
+    return asw_min
 
-    Asw_min = s*rho_w_min*model.b
+def shear_reinforcement(values, model, concrete_type, EXP):
 
-def shear_reinforcement(values, s, model):
+    n = []
+    v = []
+    erf_asw = []
+    c = values.concrete(concrete_type)
+    fcd = c['fcd']
+    fck = c['fck']
+    fyk = values.steel()
 
-    z = 0.9*values.static_useable_height(model)
+    for ele in model.elements:
+        if type(ele)==BeamColumnElement:
+            z = 0.9*values.static_usable_height(ele.h)
+
+            n.append(ele.local_internal_forces[0])
+            n.append(ele.local_internal_forces[3]*-1)
+            v.append(ele.local_internal_forces[1])
+            v.append(ele.local_internal_forces[4]*-1)
+
+            v_ed = abs(max(v)) #bis jetzt charakteristisch
+
+            
+
+            for i in n:
+                if i < 0:
+                    i = 0
+                else:
+                    pass
+            
+            n_ed = max(n)
+
+            sigma_cd = n_ed/(ele.b*ele.h)
+
+            v_rdcc = 0.5*0.48*fck**(1/3)*(1-1.2*sigma_cd/fcd)*ele.b*z
+
+            cot_theta = (1.2+1.4*sigma_cd/fcd)/(1-v_rdcc/v_ed)
+
+            if cot_theta <= 1.0:
+                cot_theta = 1.0
+            elif cot_theta >= 3.0:
+                cot_theta = 3.0
+            else:
+                cot_theta = cot_theta
+            
+            #Annahme alpha = 90°
+
+            a_sw = (v_ed*0.001)/(fyk/1.15*z*(cot_theta+0)*1)*10**4
+
+            if a_sw >= minimal_shear_reinforcement(values,model,concrete_type,ele.b):
+                erf_asw.append(a_sw)
+            else:
+                erf_asw.append(minimal_shear_reinforcement(values,model,concrete_type,ele.b))
+
+            del n[0]
+            del n[0]
+            del v[0]
+            del v[0]        
+                
+    
+    print(erf_asw)
+    return erf_asw
