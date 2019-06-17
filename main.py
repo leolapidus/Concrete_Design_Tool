@@ -1,8 +1,9 @@
 from FE_code.model import Model
 from Visualization.plot import Plot2D
-from Concrete_Design.bending_without_n import m_eds
-from Concrete_Design.values import Values
-from Concrete_Design.shear import shear_reinforcement
+# from Concrete_Design.bending_without_n import m_eds
+# from Concrete_Design.values import Values
+# from Concrete_Design.shear import shear_reinforcement
+from Concrete_Design.designing import Design
 
 
 
@@ -70,13 +71,18 @@ model.calculate_internal_forces()
 
 plot = Plot2D()
                 
-plot.geometry(model=model)
-# #plot.plot_geometry()
-plot.internal_forces(model=model)
-plot.plot_internal_forces()
+# plot.geometry(model=model)
+# # #plot.plot_geometry()
+# plot.internal_forces(model=model)
+# plot.plot_internal_forces()
 
 
 
-values = Values()
-m_eds(model=model, values=values, concrete_type='c3037', EXP='XD1')
-shear_reinforcement(values=values, model=model, concrete_type= 'c3037', EXP='XD1')
+# values = Values()
+# m_eds(model=model, values=values, concrete_type='c3037', EXP='XD1')
+# shear_reinforcement(values=values, model=model, concrete_type= 'c3037', EXP='XD1')
+
+
+design = Design(model, concrete_type = 'c3037', exp='XD1')
+design.remove_designing()
+design.bending_design()
