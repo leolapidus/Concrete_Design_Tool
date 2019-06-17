@@ -58,6 +58,8 @@ class BeamColumnElement(Element):
         self.local_internal_forces = list ()
         self.global_internal_forces = list ()
         self.load_elements = list()
+        self.bending_reinforcement = list()
+        self.shear_reinforcement = list()
 
 
     @property
@@ -226,3 +228,7 @@ class BeamColumnElement(Element):
         K_e_l = self.calculate_elastic_stiffness_matrix_local()
         f_l = K_e_l @ u_l
         return f_l
+
+    def reset_design(self):
+        self.bending_reinforcement = list()
+        self.shear_reinforcement = list()
