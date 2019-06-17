@@ -24,6 +24,13 @@ class Plot2D:
         self.y_v = list()
         self.x_m = list()
         self.y_m = list()
+        self.x_As = list()
+        self.y_As = list()
+        self.x_asw = list()
+        self.y_asw = list()
+        self.As = list()
+        self.asw = list()
+
 
     def geometry(self, model):
         #initial geometry
@@ -78,6 +85,8 @@ class Plot2D:
                 self.x_m.append(ele.nodes[1]._x+v_M2[0])
                 self.y_m.append(ele.nodes[0]._y+v_M1[1])
                 self.y_m.append(ele.nodes[1]._y+v_M2[1])
+
+    
 
     def plot_geometry(self):
 
@@ -186,6 +195,92 @@ class Plot2D:
 
         plt.show()
 
+    def reinforcement(self, model):
+
+        for i, ele in enumerate(model.elements):
+            if type(ele)==BeamColumnElement:
+                self.As.append(ele.bending_reinforcement[0])
+                self.asw.append(ele.shear_reinforcement[0])
+
+            
+                _current_vector = ele.get_vector()
+            
+                a = _current_vector[1]*-1
+                b = _current_vector[0]
+                _normal_vector = (a,b)
+            
+                normalized_vector = _normal_vector/np.linalg.norm(_normal_vector)
+
+                v_1 = normalized_vector*(self.As[i])
+                v_2 = normalized_vector*(self.asw[i])
+                
+
+                self.x_As.append(ele.nodes[0]._x+v_1[0])
+                self.x_As.append(ele.nodes[1]._x+v_1[0])
+                self.y_As.append(ele.nodes[0]._y+v_1[1])
+                self.y_As.append(ele.nodes[1]._y+v_1[1])
+
+                self.x_asw.append(ele.nodes[0]._x+v_2[0])
+                self.x_asw.append(ele.nodes[1]._x+v_2[0])
+                self.y_asw.append(ele.nodes[0]._y+v_2[1])
+                self.y_asw.append(ele.nodes[1]._y+v_2[1])
+
+    def plot_reinforcement(self):
+        
+
+        fig, ax = plt.subplots(1,2)
+        ax[0].plot(self.x, self.y)
+        ax[1].plot(self.x, self.y)
+        
+        x = []
+        for i in range(len(self.x)):
+            x.append(self.x[i])
+            x.append(self.x[i])
+        del x[0]
+        del x[-1]
+
+        y = []
+        for i in range(len(self.x)):
+            y.append(self.y[i])
+            y.append(self.y[i])
+        del y[0]
+        del y[-1]
+        
+        ax[0].plot(self.x_As, self.y_As)
+
+        segments_As = list()
+        
+        for i in range(len(x)):
+                segments_As.append(
+                    [(x[i], y[i]),
+                    (self.x_As[i], self.y_As[i])]
+                )
+        line_segments_As = LineCollection(segments_As, linewidths=0.5, colors='lightblue')
+        ax[0].add_collection(line_segments_As)
+        ax[0].set_title('Biegebewehrung')
+
+        ax[0].fill_between(x, self.y_As, y, alpha=0.5)
+        
+        # for i, value in enumerate(self.As):
+        #     ax[0].annotate(round(value, 3), (self.x_As[i+1], self.y_As[i+1]))
+
+
+        ax[1].plot(self.x_asw, self.y_asw)
+
+        segments_asw = list()
+        
+        for i in range(len(x)):
+                segments_asw.append(
+                    [(x[i], y[i]),
+                    (self.x_asw[i], self.y_asw[i])]
+                )
+        line_segments_asw = LineCollection(segments_asw, linewidths=0.5, colors='lightblue')
+        ax[1].add_collection(line_segments_asw)
+        ax[1].set_title('Querkraftbewehrung')
+
+        ax[1].fill_between(x, self.y_asw, y, alpha=0.5)
+
+        plt.show()
 
 
  
