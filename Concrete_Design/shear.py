@@ -7,19 +7,6 @@ from FE_code.model import Model
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.values import Values 
 
-
-# @property
-# def fctm(values, concrete_type):
-#     fctm = values.concrete.concrete_type['fctm']
-    
-#     return fctm
-
-# @property
-# def fyk(values):
-#     fyk = values.steel
-    
-#     return fyk
-
 def minimal_shear_reinforcement(values, model, concrete_type, b):
 
     c = values.concrete(concrete_type)
@@ -53,7 +40,7 @@ def shear_reinforcement(values, model, concrete_type, EXP):
             v.append(ele.local_internal_forces[1])
             v.append(ele.local_internal_forces[4]*-1)
 
-            v_ed = abs(max(v)) #bis jetzt charakteristisch
+            v_ed = abs(max(v)) 
 
             
 
