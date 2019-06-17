@@ -71,7 +71,7 @@ model.calculate_internal_forces()
 
 plot = Plot2D()
                 
-# plot.geometry(model=model)
+plot.geometry(model=model)
 # # #plot.plot_geometry()
 # plot.internal_forces(model=model)
 # plot.plot_internal_forces()
@@ -86,3 +86,7 @@ plot = Plot2D()
 design = Design(model, concrete_type = 'c3037', exp='XD1')
 design.remove_designing()
 design.bending_design()
+design.shear_design()
+
+plot.reinforcement(model=model)
+plot.plot_reinforcement()
