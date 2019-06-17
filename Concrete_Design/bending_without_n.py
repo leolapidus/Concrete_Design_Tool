@@ -11,7 +11,7 @@ from Concrete_Design.values import Values
 #TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
 
 
-def m_eds(model, values, concrete_type, EXP):
+def bending(model, values, concrete_type, exp):
     m = []
     erf_As = []
     c = values.concrete(concrete_type)
@@ -24,7 +24,7 @@ def m_eds(model, values, concrete_type, EXP):
 
             b = ele.b
             h = ele.h 
-            _calculate_concrete_cover = values.concrete_cover(EXP)
+            _calculate_concrete_cover = values.concrete_cover(exp)
             
 
             mue_eds = m_ed/(b*(values.static_usable_height(h)**2)*fcd)
