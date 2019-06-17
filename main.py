@@ -2,6 +2,7 @@ from FE_code.model import Model
 from Visualization.plot import Plot2D
 from Concrete_Design.bending_without_n import m_eds
 from Concrete_Design.values import Values
+from Concrete_Design.shear import shear_reinforcement
 
 
 
@@ -78,3 +79,4 @@ plot.plot_internal_forces()
 
 values = Values()
 m_eds(model=model, values=values, concrete_type='c3037', EXP='XD1')
+shear_reinforcement(values=values, model=model, concrete_type= 'c3037', EXP='XD1')
