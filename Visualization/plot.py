@@ -58,18 +58,20 @@ class Plot2D:
             
                 _current_vector = ele.get_vector()
             
-                a = _current_vector[1]*-1
-                b = _current_vector[0]
+                a = _current_vector[1]
+                b = _current_vector[0]*-1
                 _normal_vector = (a,b)
-            
+                           
                 normalized_vector = _normal_vector/np.linalg.norm(_normal_vector)
-
+                
+                
                 v_N1 = normalized_vector*(self.N[i+i]/100)
                 v_N2 = normalized_vector*(self.N[i+i+1]/100)
                 v_V1 = normalized_vector*(self.V[i+i]/100)
                 v_V2 = normalized_vector*(self.V[i+i+1]/100)
                 v_M1 = normalized_vector*(self.M[i+i]/100)
                 v_M2 = normalized_vector*(self.M[i+i+1]/100)
+          
 
                 self.x_n.append(ele.nodes[0]._x+v_N1[0])
                 self.x_n.append(ele.nodes[1]._x+v_N2[0])
