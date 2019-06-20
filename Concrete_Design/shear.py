@@ -9,14 +9,12 @@ from Concrete_Design.values import Values
 
 def minimal_shear_reinforcement(values, model, concrete_type, b):
 
-    c = values.concrete(concrete_type)
-    fctm = c['fctm']
-
+    fctm = values.concrete(concrete_type)['fctm']
     fyk = values.steel()
 
    
     rho_w_min = 0.16*fctm/fyk
-    asw_min = rho_w_min*b
+    asw_min = rho_w_min*b*10000
     print(asw_min)
     
     return asw_min
@@ -26,9 +24,8 @@ def shear_reinforcement(values, model, concrete_type, EXP):
     n = []
     v = []
     erf_asw = []
-    c = values.concrete(concrete_type)
-    fcd = c['fcd']
-    fck = c['fck']
+    fcd = values.concrete(concrete_type)['fcd']
+    fck = values.concrete(concrete_type)['fck']
     fyk = values.steel()
 
     for ele in model.elements:
@@ -40,7 +37,7 @@ def shear_reinforcement(values, model, concrete_type, EXP):
             v.append(ele.local_internal_forces[1])
             v.append(ele.local_internal_forces[4]*-1)
 
-            v_ed = abs(max(v)) 
+            v_ed = max(abs(v[0]), abs(v[1])) 
 
             
 
