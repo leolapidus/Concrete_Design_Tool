@@ -14,8 +14,7 @@ from Concrete_Design.values import Values
 def bending(model, values, concrete_type, exp):
     m = []
     erf_As = []
-    c = values.concrete(concrete_type)
-    fcd = c['fcd']
+    fcd = values.concrete(concrete_type)['fcd']
     for ele in model.elements:
         if type(ele)==BeamColumnElement:
             m.append(ele.local_internal_forces[2])
