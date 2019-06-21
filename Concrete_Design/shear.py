@@ -15,7 +15,7 @@ def minimal_shear_reinforcement(values, model, concrete_type, b):
    
     rho_w_min = 0.16*fctm/fyk
     asw_min = rho_w_min*b*10000
-    print(asw_min)
+    
     
     return asw_min
 
