@@ -19,7 +19,9 @@ def bending(model, values, concrete_type, exp):
         if type(ele)==BeamColumnElement:
             m.append(ele.local_internal_forces[2])
             m.append(ele.local_internal_forces[5]*-1)
-            m_ed = abs(max(m))*0.001
+            #m_ed = abs(max(m))*0.001
+            m_ed = max(abs(m[0]), abs(m[1]))
+            m_ed = m_ed*0.001
 
             b = ele.b
             h = ele.h 
@@ -29,7 +31,6 @@ def bending(model, values, concrete_type, exp):
             mue_eds = m_ed/(b*(values.static_usable_height(h)**2)*fcd)
 
 
-            print(mue_eds)
 
             table=values.design_table_values()
 
