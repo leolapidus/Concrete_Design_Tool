@@ -24,7 +24,7 @@ for i in range(5):
 #Beam 2
 
 for i in range(5):
-    model.add_node(id=i+22, x=i*0.2+0.2, y=1+i*0.1)
+    model.add_node(id=i+22, x=i*0.2+0.2, y=1)
 
 model.add_beam(id=22, node_ids=[6, 22], element_type='beam')
     
