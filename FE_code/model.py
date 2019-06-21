@@ -416,7 +416,7 @@ class Model:
             node_id, dof_type = assembler.dof_at_index(index)
             node = self.get_node(node_id)
             node.results[dof_type] = u[index]
-        print("node.results", node.results)
+        #print("node.results", node.results)
 
              
     def remove_solution(self):
@@ -445,7 +445,7 @@ class Model:
                     external_forces = np.array([0, 0, 0, 0, 0, 0])
                 internal_forces = beam_end_forces - external_forces
                 ele.local_internal_forces = internal_forces
-                print(ele.local_internal_forces)
+                #print(ele.local_internal_forces)
                 
         #global nodal force vector
         for ele in self.elements:
@@ -461,4 +461,4 @@ class Model:
                     external_forces = np.array([0, 0, 0, 0, 0, 0])
                 internal_forces = beam_end_forces - external_forces
                 ele.global_internal_forces = internal_forces
-                print(ele.global_internal_forces)       
+                #print(ele.global_internal_forces)       
