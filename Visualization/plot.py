@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import numpy as np
 from matplotlib.collections import LineCollection
+from matplotlib.collections import PolyCollection
 from matplotlib import colors as mcolors
 from matplotlib.gridspec import GridSpec
 
@@ -65,12 +66,12 @@ class Plot2D:
                 normalized_vector = _normal_vector/np.linalg.norm(_normal_vector)
                 
                 
-                v_N1 = normalized_vector*(self.N[i+i]/100)
-                v_N2 = normalized_vector*(self.N[i+i+1]/100)
-                v_V1 = normalized_vector*(self.V[i+i]/100)
-                v_V2 = normalized_vector*(self.V[i+i+1]/100)
-                v_M1 = normalized_vector*(self.M[i+i]/100)
-                v_M2 = normalized_vector*(self.M[i+i+1]/100)
+                v_N1 = normalized_vector*(self.N[i+i]/1000)
+                v_N2 = normalized_vector*(self.N[i+i+1]/1000)
+                v_V1 = normalized_vector*(self.V[i+i]/1000)
+                v_V2 = normalized_vector*(self.V[i+i+1]/1000)
+                v_M1 = normalized_vector*(self.M[i+i]/1000)
+                v_M2 = normalized_vector*(self.M[i+i+1]/1000)
           
 
                 self.x_n.append(ele.nodes[0]._x+v_N1[0])
@@ -125,17 +126,15 @@ class Plot2D:
 
         #Axes 1: show deformed system
         
-        ax1.plot(self.x, self.y)
+        ax1.plot(self.x, self.y, 'k')
         ax1.plot(self.x_d, self.y_d)
         ax1.set_title('verformter Zustand')
 
-        for i, value in enumerate(self.y_d):
-            ax1.annotate(round(value, 3), (self.x_d[i], self.y_d[i]))
-
+        # for i, value in enumerate(self.y_d):
+        #     ax1.annotate(round(value, 3), (self.x_d[i], self.y_d[i]))
         #Axes 2: show normal forces
 
-        ax2.plot(self.x, self.y)
-        ax2.plot(self.x_n, self.y_n)
+        ax2.plot(self.x, self.y, 'k')
         segments_n = list()
         
         for i in range(len(x)):
@@ -143,17 +142,29 @@ class Plot2D:
                     [(x[i], y[i]),
                     (self.x_n[i], self.y_n[i])]
                 )
-        line_segments_n = LineCollection(segments_n, linewidths=0.5, colors='lightblue')
+        line_segments_n = LineCollection(segments_n, linewidths=0.5, colors='darkgrey')
         ax2.add_collection(line_segments_n)
+
+        verts_n = list()
+        l = int((len(x))/2)
+        for i in range(l):
+                verts_n.append(
+                    [(x[i+i], y[i+i]),
+                    (self.x_n[i+i], self.y_n[i+i]),
+                    (self.x_n[i+i+1], self.y_n[i+i+1]),
+                    (x[i+i+1], y[i+i+1])]
+                )
+        poly_verts_n = PolyCollection(verts_n, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
+        ax2.add_collection(poly_verts_n)
+        ax2.autoscale()
         ax2.set_title('Normalkraftverlauf')
 
-        for i, value in enumerate(self.N):
-            ax2.annotate(round(value, 3), (self.x_n[i], self.y_n[i]))
+        # for i, value in enumerate(self.N):
+        #     ax2.annotate(round(value, 3), (self.x_n[i], self.y_n[i]))
 
         #Axes3: show shear force
 
-        ax3.plot(self.x, self.y)
-        ax3.plot(self.x_v, self.y_v)
+        ax3.plot(self.x, self.y, 'k')
         segments_v = list()
         
         for i in range(len(x)):
@@ -161,21 +172,32 @@ class Plot2D:
                     [(x[i], y[i]),
                     (self.x_v[i], self.y_v[i])]
                 )
-        line_segments_v = LineCollection(segments_v, linewidths=0.5, colors='lightblue')
+        line_segments_v = LineCollection(segments_v, linewidths=0.5, colors='darkgrey')
         ax3.add_collection(line_segments_v)
+
+        verts_v = list()
+        l = int((len(x))/2)
+        for i in range(l):
+                verts_v.append(
+                    [(x[i+i], y[i+i]),
+                    (self.x_v[i+i], self.y_v[i+i]),
+                    (self.x_v[i+i+1], self.y_v[i+i+1]),
+                    (x[i+i+1], y[i+i+1])]
+                )
+        poly_verts_v = PolyCollection(verts_v, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
+        ax3.add_collection(poly_verts_v)
+        ax3.autoscale()
         ax3.set_title('Querkraftverlauf')
 
-        ax3.fill_between(x, self.y_v, y, alpha=0.5)
         
-        for i, value in enumerate(self.V):
-            ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
+        # for i, value in enumerate(self.V):
+        #     ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
 
         
         #Axes 4: show bending moment
         #TODO: change direction of plot
 
-        ax4.plot(self.x, self.y)        
-        ax4.plot(self.x_m, self.y_m)
+        ax4.plot(self.x, self.y, 'k')
         segments_m = list()
         
         for i in range(len(x)):
@@ -183,15 +205,28 @@ class Plot2D:
                     [(x[i], y[i]),
                     (self.x_m[i], self.y_m[i])]
                 )
-        line_segments_m = LineCollection(segments_m, linewidths=0.5, colors='lightblue')
+        line_segments_m = LineCollection(segments_m, linewidths=0.5, colors='darkgrey')
         ax4.add_collection(line_segments_m)
+
+        verts_m = list()
+        l = int((len(x))/2)
+        for i in range(l):
+                verts_m.append(
+                    [(x[i+i], y[i+i]),
+                    (self.x_m[i+i], self.y_m[i+i]),
+                    (self.x_m[i+i+1], self.y_m[i+i+1]),
+                    (x[i+i+1], y[i+i+1])]
+                )
+        poly_verts_m = PolyCollection(verts_m, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
+        ax4.add_collection(poly_verts_m)
+        ax4.autoscale()
         ax4.set_title('Momentenverlauf')
 
         
-        ax4.fill_between(x, self.y_m, y, alpha=0.5)
+        
 
-        for i, value in enumerate(self.M):
-            ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
+        # for i, value in enumerate(self.M):
+        #     ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
         
         
 
@@ -231,8 +266,8 @@ class Plot2D:
         
 
         fig, ax = plt.subplots(1,2)
-        ax[0].plot(self.x, self.y)
-        ax[1].plot(self.x, self.y)
+        ax[0].plot(self.x, self.y, 'k')
+        
         
         x = []
         for i in range(len(self.x)):
@@ -248,7 +283,7 @@ class Plot2D:
         del y[0]
         del y[-1]
         
-        ax[0].plot(self.x_As, self.y_As)
+        #Biegebewehrung
 
         segments_As = list()
         
@@ -257,18 +292,30 @@ class Plot2D:
                     [(x[i], y[i]),
                     (self.x_As[i], self.y_As[i])]
                 )
-        line_segments_As = LineCollection(segments_As, linewidths=0.5, colors='lightblue')
+        line_segments_As = LineCollection(segments_As, linewidths=0.5, colors='darkgrey')
         ax[0].add_collection(line_segments_As)
+
+        verts_As = list()
+        l = int((len(x))/2)
+        for i in range(l):
+                verts_As.append(
+                    [(x[i+i], y[i+i]),
+                    (self.x_As[i+i], self.y_As[i+i]),
+                    (self.x_As[i+i+1], self.y_As[i+i+1]),
+                    (x[i+i+1], y[i+i+1])]
+                )
+        poly_verts_As = PolyCollection(verts_As, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
+        ax[0].add_collection(poly_verts_As)
+        ax[0].autoscale()
         ax[0].set_title('Biegebewehrung')
 
-        ax[0].fill_between(x, self.y_As, y, alpha=0.5)
-        
         # for i, value in enumerate(self.As):
         #     ax[0].annotate(round(value, 3), (self.x_As[i+1], self.y_As[i+1]))
 
 
-        ax[1].plot(self.x_asw, self.y_asw)
+        #Querkraftbewehrung
 
+        ax[1].plot(self.x, self.y, 'k')
         segments_asw = list()
         
         for i in range(len(x)):
@@ -276,11 +323,24 @@ class Plot2D:
                     [(x[i], y[i]),
                     (self.x_asw[i], self.y_asw[i])]
                 )
-        line_segments_asw = LineCollection(segments_asw, linewidths=0.5, colors='lightblue')
+        line_segments_asw = LineCollection(segments_asw, linewidths=0.5, colors='darkgrey')
         ax[1].add_collection(line_segments_asw)
+
+        verts_asw = list()
+        l = int((len(x))/2)
+        for i in range(l):
+                verts_asw.append(
+                    [(x[i+i], y[i+i]),
+                    (self.x_asw[i+i], self.y_asw[i+i]),
+                    (self.x_asw[i+i+1], self.y_asw[i+i+1]),
+                    (x[i+i+1], y[i+i+1])]
+                )
+        poly_verts_asw = PolyCollection(verts_asw, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
+        ax[1].add_collection(poly_verts_asw)
+        ax[1].autoscale()
         ax[1].set_title('Querkraftbewehrung')
 
-        ax[1].fill_between(x, self.y_asw, y, alpha=0.5)
+        
 
         plt.show()
 
