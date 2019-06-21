@@ -36,7 +36,7 @@ model.set_material_parameters(younges_modulus, b, h)
 model.add_dirichlet_condition(dof=(1, 'u'), value=0)
 model.add_dirichlet_condition(dof=(1, 'v'), value=0)
 model.add_dirichlet_condition(dof=(26, 'v'), value=0)
-model.add_dirichlet_condition(dof=(26, 'u'), value=0)
+#model.add_dirichlet_condition(dof=(26, 'u'), value=0)
 
 #loads
 #linear load
@@ -58,7 +58,7 @@ plot = Plot2D()
 plot.geometry(model)
 # plot.plot_geometry()
 plot.internal_forces(model)
-plot.plot_internal_forces()
+plot.plot_internal_forces(model)
 
 
 design = Design(model, concrete_type, expositionclass)
