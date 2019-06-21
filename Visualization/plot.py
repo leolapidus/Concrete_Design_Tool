@@ -100,7 +100,7 @@ class Plot2D:
         plt.show()
         plt.axis([0, 5, 0, -1]) #plt.axis([xmin, xmax, ymin, ymax])
     
-    def plot_internal_forces(self):
+    def plot_internal_forces(self, model):
         fig = plt.figure(constrained_layout=True)
         gs = GridSpec(2, 3, figure=fig)
         ax1 = fig.add_subplot(gs[0, :])
@@ -131,6 +131,15 @@ class Plot2D:
 
         # for i, value in enumerate(self.y_d):
         #     ax1.annotate(round(value, 3), (self.x_d[i], self.y_d[i]))
+
+        a = 'u'
+        for i, node in enumerate(model.nodes):
+            ax1.annotate(round(node.results[a], 4), (self.x_d[i], self.y_d[i]))
+        
+        ax1.annotate(f'Verschiebung {a}', xy=(0,1), xycoords='axes fraction',
+                        fontsize=12, xytext=(5,12), textcoords='offset points', ha='left', va='top')
+            
+
         #Axes 2: show normal forces
 
         ax2.plot(self.x, self.y, 'k')
@@ -231,7 +240,7 @@ class Plot2D:
             ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
         
         
-
+        plt.get_current_fig_manager().window.state('zoomed')
         plt.show()
 
     def reinforcement(self, model):
@@ -311,7 +320,7 @@ class Plot2D:
         ax[0].axis('off')
         As = round(max(self.As),3)
         ax[0].annotate(f'Maximale Längsbewehrung \n{As} cm²/m', xy=(0,1), xycoords='axes fraction',
-                        fontsize=7, xytext=(5,-5), textcoords='offset points', ha='left', va='top')
+                        fontsize=9, xytext=(3,-5), textcoords='offset points', ha='left', va='top')
         
         ax[0].autoscale()
         ax[0].set_title('Biegebewehrung')
@@ -348,12 +357,13 @@ class Plot2D:
         ax[1].axis('off')
         asw = round(max(self.asw),3)
         ax[1].annotate(f'Maximale Querkaftbewehrung \n{asw} cm²/m', xy=(0,1), xycoords='axes fraction',
-                        fontsize=7, xytext=(5,-5), textcoords='offset points', ha='left', va='top')
+                        fontsize=9, xytext=(3,-5), textcoords='offset points', ha='left', va='top')
         
         ax[1].set_title('Querkraftbewehrung')
 
         
-
+        plt.get_current_fig_manager().window.state('zoomed')
+        
         plt.show()
 
 
