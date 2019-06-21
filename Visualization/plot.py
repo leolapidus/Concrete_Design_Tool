@@ -32,7 +32,6 @@ class Plot2D:
         self.As = list()
         self.asw = list()
 
-
     def geometry(self, model):
         #initial geometry
         for node in model.nodes:
@@ -157,6 +156,7 @@ class Plot2D:
         poly_verts_n = PolyCollection(verts_n, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax2.add_collection(poly_verts_n)
         ax2.autoscale()
+        ax2.axis('off')
         ax2.set_title('Normalkraftverlauf')
 
         # for i, value in enumerate(self.N):
@@ -187,11 +187,12 @@ class Plot2D:
         poly_verts_v = PolyCollection(verts_v, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax3.add_collection(poly_verts_v)
         ax3.autoscale()
+        ax3.axis('off')
         ax3.set_title('Querkraftverlauf')
 
         
-        # for i, value in enumerate(self.V):
-        #     ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
+        for i, value in enumerate(self.V):
+            ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
 
         
         #Axes 4: show bending moment
@@ -220,13 +221,14 @@ class Plot2D:
         poly_verts_m = PolyCollection(verts_m, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax4.add_collection(poly_verts_m)
         ax4.autoscale()
+        ax4.axis('off')
         ax4.set_title('Momentenverlauf')
 
         
         
 
-        # for i, value in enumerate(self.M):
-        #     ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
+        for i, value in enumerate(self.M):
+            ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
         
         
 
@@ -306,6 +308,11 @@ class Plot2D:
                 )
         poly_verts_As = PolyCollection(verts_As, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax[0].add_collection(poly_verts_As)
+        ax[0].axis('off')
+        As = round(max(self.As),3)
+        ax[0].annotate(f'Maximale Längsbewehrung \n{As} cm²/m', xy=(0,1), xycoords='axes fraction',
+                        fontsize=7, xytext=(5,-5), textcoords='offset points', ha='left', va='top')
+        
         ax[0].autoscale()
         ax[0].set_title('Biegebewehrung')
 
@@ -338,6 +345,11 @@ class Plot2D:
         poly_verts_asw = PolyCollection(verts_asw, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax[1].add_collection(poly_verts_asw)
         ax[1].autoscale()
+        ax[1].axis('off')
+        asw = round(max(self.asw),3)
+        ax[1].annotate(f'Maximale Querkaftbewehrung \n{asw} cm²/m', xy=(0,1), xycoords='axes fraction',
+                        fontsize=7, xytext=(5,-5), textcoords='offset points', ha='left', va='top')
+        
         ax[1].set_title('Querkraftbewehrung')
 
         
