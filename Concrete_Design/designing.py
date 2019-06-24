@@ -8,6 +8,7 @@ from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.bending_without_n import bending_without_n
 from Concrete_Design.bending_with_n import bending_with_n
 from Concrete_Design.shear import shear_reinforcement
+from Concrete_Design.debug_print import debug
 
 class Design:
     """
