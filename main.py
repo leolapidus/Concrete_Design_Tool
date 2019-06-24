@@ -69,9 +69,3 @@ design.shear_design()
 plot.reinforcement(model)
 plot.plot_reinforcement()
 
-u_actual = [node.results['u'] for node in model.nodes]#, key=abs
-v_actual = [node.results['v'] for node in model.nodes]#, key=abs
-phi_actual = [node.results['phi'] for node in model.nodes]#, key=abs
-print("u_acutal =", u_actual)
-print("v_acutal =", v_actual)
-print("phi_acutal =", phi_actual)
