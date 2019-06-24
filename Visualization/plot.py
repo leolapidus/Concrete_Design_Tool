@@ -134,7 +134,7 @@ class Plot2D:
         ax1.set_title('verformter Zustand')
 
         # for i, value in enumerate(self.y_d):
-        #     ax1.annotate(round(value, 3), (self.x_d[i], self.y_d[i]))
+        #     ax1.annotate("%.3f" % value, (self.x_d[i], self.y_d[i]))
 
         a = 'v'
         for i, node in enumerate(model.nodes):
@@ -147,15 +147,6 @@ class Plot2D:
         #Axes 2: show normal forces
 
         ax2.plot(self.x, self.y, 'k')
-        # segments_n = list()
-        
-        # for i in range(len(x)):
-        #         segments_n.append(
-        #             [(x[i], y[i]),
-        #             (self.x_n[i], self.y_n[i])]
-        #         )
-        # line_segments_n = LineCollection(segments_n, linewidths=0.5, colors='darkgrey')
-        # ax2.add_collection(line_segments_n)
 
         verts_n = list()
         l = int((len(x))/2)
@@ -174,21 +165,12 @@ class Plot2D:
         ax2.set_title('Normalkraftverlauf')
 
         for i, value in enumerate(self.N):
-            ax2.annotate(round(value, 3), (self.x_n[i], self.y_n[i]))
+            ax2.annotate("%.3f" % value, (self.x_n[i], self.y_n[i]))
 
         #Axes3: show shear force
 
         ax3.plot(self.x, self.y, 'k')
-        # segments_v = list()
         
-        # for i in range(len(x)):
-        #         segments_v.append(
-        #             [(x[i], y[i]),
-        #             (self.x_v[i], self.y_v[i])]
-        #         )
-        # line_segments_v = LineCollection(segments_v, linewidths=0.5, colors='darkgrey')
-        # ax3.add_collection(line_segments_v)
-
         verts_v = list()
         l = int((len(x))/2)
         for i in range(l):
@@ -207,23 +189,14 @@ class Plot2D:
 
         
         for i, value in enumerate(self.V):
-            ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
+            ax3.annotate("%.3f" % value, (self.x_v[i], self.y_v[i]))
 
         
         #Axes 4: show bending moment
         #TODO: change direction of plot
 
         ax4.plot(self.x, self.y, 'k')
-        # segments_m = list()
         
-        # for i in range(len(x)):
-        #         segments_m.append(
-        #             [(x[i], y[i]),
-        #             (self.x_m[i], self.y_m[i])]
-        #         )
-        # line_segments_m = LineCollection(segments_m, linewidths=0.5, colors='darkgrey')
-        # ax4.add_collection(line_segments_m)
-
         verts_m = list()
         l = int((len(x))/2)
         for i in range(l):
@@ -244,7 +217,7 @@ class Plot2D:
         
 
         for i, value in enumerate(self.M):
-            ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
+            ax4.annotate("%.3f" % value, (self.x_m[i], self.y_m[i]))
         
         
         plt.get_current_fig_manager().window.state('zoomed')
@@ -325,16 +298,16 @@ class Plot2D:
         poly_verts_As = PolyCollection(verts_As, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax[0].add_collection(poly_verts_As)
         ax[0].axis('off')
-        As = round(max(self.As),3)
-        ax[0].annotate(f'Maximale Längsbewehrung \n{As} cm²/m', xy=(0,1), xycoords='axes fraction',
+        As = "%.3f" % max(self.As)
+        ax[0].annotate(f'Maximale Längsbewehrung \n{As} cm²', xy=(0,1), xycoords='axes fraction',
                         fontsize=9, xytext=(3,-5), textcoords='offset points', ha='left', va='top')
         
         ax[0].autoscale()
         ax[0].axis('equal')
-        ax[0].set_title('Biegebewehrung')
+        ax[0].set_title('Längsbewehrung')
 
         # for i, value in enumerate(self.As):
-        #     ax[0].annotate(round(value, 3), (self.x_As[i+1], self.y_As[i+1]))
+        #     ax[0].annotate("%.3f" % value, (self.x_As[i+1], self.y_As[i+1]))
 
 
         #Querkraftbewehrung
@@ -364,7 +337,7 @@ class Plot2D:
         #ax[1].autoscale()
         ax[1].axis('equal')
         ax[1].axis('off')
-        asw = round(max(self.asw),3)
+        asw = "%.3f" % max(self.asw)
         ax[1].annotate(f'Maximale Querkaftbewehrung \n{asw} cm²/m', xy=(0,1), xycoords='axes fraction',
                         fontsize=9, xytext=(3,-5), textcoords='offset points', ha='left', va='top')
         
