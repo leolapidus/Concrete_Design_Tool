@@ -8,6 +8,21 @@ from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.values import Values 
 
 def minimal_shear_reinforcement(values, model, concrete_type, b):
+    """Calculate the minimal necessery shear reinforcment.
+
+    Parameters
+    ----------
+    model : class
+        class method that contains the Finite Element Analysis
+    
+    concrete_type: str
+        string that define the concrete type, e.g. 'c3037'
+
+    Returns
+    -------
+    asw_min : float
+        minimal necessary shear reinforcement
+    """
 
     fctm = values.concrete(concrete_type)['fctm']
     fyk = values.steel()
@@ -19,7 +34,23 @@ def minimal_shear_reinforcement(values, model, concrete_type, b):
     
     return asw_min
 
-def shear_reinforcement(values, model, concrete_type, EXP):
+def shear_reinforcement(values, model, concrete_type):
+    """Calculate the shear reinforcment that is bigger than the minimal
+    necessary shear reinforcement.
+
+    Parameters
+    ----------
+    model : class
+        class method that contains the Finite Element Analysis
+    
+    concrete_type: str
+        string that define the concrete type, e.g. 'c3037'
+    
+    Returns
+    -------
+    erf_asw : float
+        necessary shear reinforcement with respect to the minimal necessary reinforcement
+    """
 
     n = []
     v = []
