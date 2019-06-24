@@ -9,6 +9,7 @@ import numpy as np
 import numpy.linalg as la
 from FE_code.element import Element
 from FE_code.node import Node
+import scipy
 
 
 class BeamColumnElement(Element):
@@ -191,7 +192,9 @@ class BeamColumnElement(Element):
         """
         transform_matrix = self.get_transform_matrix()
         K_e_l = self.calculate_elastic_stiffness_matrix_local()
-        K_e = transform_matrix.T @ K_e_l @ transform_matrix
+        a = np.dot(transform_matrix.T, K_e_l)
+        K_e = np.dot(a, transform_matrix)
+      #  K_e = transform_matrix.T @ K_e_l @ transform_matrix
 
         return K_e
 
@@ -208,7 +211,7 @@ class BeamColumnElement(Element):
         for i_node in self.nodes:
             u_g.extend( [ i_node.results['u'], i_node.results['v'], i_node.results['phi'] ] )
         K_g = self.calculate_elastic_stiffness_matrix()
-        f_g = K_g @ u_g
+        f_g = np.dot(K_g, u_g)
         return f_g
     
     def calculate_local_element_end_forces(self):
@@ -226,7 +229,7 @@ class BeamColumnElement(Element):
         transform_matrix = self.get_transform_matrix()
         u_l = transform_matrix @ u_e
         K_e_l = self.calculate_elastic_stiffness_matrix_local()
-        f_l = K_e_l @ u_l
+        f_l = np.dot(K_e_l, u_l)
         return f_l
 
     def reset_design(self):
