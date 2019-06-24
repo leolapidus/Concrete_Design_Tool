@@ -1,6 +1,4 @@
 """This module contains helpers for visualize data.
-
-Authors: Klaus Sautter, Thomas Oberbichler, Armin Geiser
 """
 
 
@@ -138,7 +136,7 @@ class Plot2D:
         # for i, value in enumerate(self.y_d):
         #     ax1.annotate(round(value, 3), (self.x_d[i], self.y_d[i]))
 
-        a = 'u'
+        a = 'v'
         for i, node in enumerate(model.nodes):
             ax1.annotate(round(node.results[a], 4), (self.x_d[i], self.y_d[i]))
         
@@ -206,8 +204,8 @@ class Plot2D:
         ax3.set_title('Querkraftverlauf')
 
         
-        for i, value in enumerate(self.V):
-            ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
+        # for i, value in enumerate(self.V):
+        #     ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
 
         
         #Axes 4: show bending moment
@@ -242,8 +240,8 @@ class Plot2D:
         
         
 
-        for i, value in enumerate(self.M):
-            ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
+        # for i, value in enumerate(self.M):
+        #     ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
         
         
         plt.get_current_fig_manager().window.state('zoomed')
