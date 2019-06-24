@@ -1,5 +1,5 @@
-"""Design Tool
-==============
+"""Design
+=========
 This tool contains designing tools for a concrete beam under 
 bending and shear loads"""
 
