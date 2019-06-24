@@ -5,7 +5,8 @@ bending and shear loads"""
 
 from Concrete_Design.values import Values
 from FE_code.beam_column_element import BeamColumnElement
-from Concrete_Design.bending_without_n import bending
+from Concrete_Design.bending_without_n import bending_without_n
+from Concrete_Design.bending_with_n import bending_with_n
 from Concrete_Design.shear import shear_reinforcement
 
 class Design:
@@ -24,7 +25,7 @@ class Design:
 
     exp : str
         String that holds the Expositionsklasse.
-        Use only the maßgebende: 'XC1', 'XC2', 'XC3', 'XC4', 'XD1', 'XD2', 'XD3','XS1', 'XS2', 'XS3'
+        Use only the authoritative: 'XC1', 'XC2', 'XC3', 'XC4', 'XD1', 'XD2', 'XD3','XS1', 'XS2', 'XS3'
     """
 
     def __init__(self, model, concrete_type, exp):
@@ -44,7 +45,7 @@ class Design:
     #==== designing
 
     
-    def bending_design(self):
+    def bending_design_without_n(self):
         """Concrte design of a beam element under bending load.
 
         Returns
@@ -53,7 +54,26 @@ class Design:
             Area of necessary reinforcement
         """
         #bending without normal force
-        As = bending(self.model, self.values, self.concrete_type, self.exp)
+        As = bending_without_n(self.model, self.values, self.concrete_type, self.exp)
+
+        #add reinforcement to element information 
+
+        for i, ele in enumerate(self.model.elements):
+            if type(ele)==BeamColumnElement:
+                ele.bending_reinforcement.append(As[i])
+        
+        return As
+
+    def bending_design_with_n(self):
+        """Concrte design of a beam element under bending load and normal force.
+
+        Returns
+        -------
+        As = float
+            Area of necessary reinforcement
+        """
+        #bending without normal force
+        As = bending_with_n(self.model, self.values, self.concrete_type, self.exp)
 
         #add reinforcement to element information 
 
