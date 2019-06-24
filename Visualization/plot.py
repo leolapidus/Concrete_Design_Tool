@@ -1,3 +1,9 @@
+"""This module contains helpers for visualize data.
+
+Authors: Klaus Sautter, Thomas Oberbichler, Armin Geiser
+"""
+
+
 import matplotlib.pyplot as plt 
 import numpy as np
 from matplotlib.collections import LineCollection
