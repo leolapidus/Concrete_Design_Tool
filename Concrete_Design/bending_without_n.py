@@ -1,5 +1,6 @@
 """This module contains the dimensioning of a beam 
-that is loaded by a torque load"""
+that is loaded by a torque load without normal forces
+"""
 
 import numpy as np 
 
@@ -12,6 +13,14 @@ from Concrete_Design.values import Values
 
 
 def bending(model, values, concrete_type, exp):
+    """Calculate the necessery longitudial reinforcment of a
+    beam that is loaded by a torque load without normal forces.
+
+    Parameters
+    ----------
+    model : class
+        class method that contains the Finite Element Analysis
+    """
     m = []
     erf_As = []
     fcd = values.concrete(concrete_type)['fcd']
@@ -27,12 +36,9 @@ def bending(model, values, concrete_type, exp):
             h = ele.h 
             _calculate_concrete_cover = values.concrete_cover(exp)
             
-
             mue_eds = m_ed/(b*(values.static_usable_height(h)**2)*fcd)
 
-
-
-            table=values.design_table_values()
+            _table=values.design_table_values()
 
             omega = values.interpolate_omega(mue_eds)
             sigma = values.interpolate_sigma(mue_eds)
