@@ -3,6 +3,8 @@ from Visualization.plot import Plot2D
 from Concrete_Design.designing import Design
 from Concrete_Design.values import Values
 
+import hyperjet as hj
+
 
 #Define model
 model = Model(analysis_type='beam')
@@ -11,6 +13,12 @@ concrete_type = 'c2530'
 expositionclass = 'XC3'
 b = 1   #m
 h = 0.5 #m
+
+use_hyperjet = True
+if use_hyperjet:
+    b = hj.HyperJet(b, [1,0])
+    h = hj.HyperJet(h, [0,1])
+    
 
 younges_modulus = val.concrete(concrete_type)['Ecm']
 
@@ -62,7 +70,7 @@ plot.plot_internal_forces(model)
 
 design = Design(model, concrete_type, expositionclass)
 design.remove_designing()
-design.bending_design_with_n()
+design.bending_design_without_n()
 design.shear_design()
 
 plot.reinforcement(model)
