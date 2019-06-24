@@ -64,7 +64,7 @@ class Design:
         return As
 
     def shear_design(self):
-         """Concrte design of a beam element under shear load.
+        """Concrte design of a beam element under shear load.
 
         Returns
         -------
@@ -72,7 +72,7 @@ class Design:
             Area of necessary reinforcement per meter
         """
 
-        asw = shear_reinforcement(self.values, self.model, self.concrete_type, self.exp)
+        asw = shear_reinforcement(self.values, self.model, self.concrete_type)
 
         #add reinforcement to element information
 
