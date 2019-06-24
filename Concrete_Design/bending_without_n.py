@@ -12,7 +12,7 @@ from Concrete_Design.values import Values
 #TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
 
 
-def bending(model, values, concrete_type, exp):
+def bending_without_n(model, values, concrete_type, exp):
     """Calculate the necessery longitudial reinforcment of a
     beam that is loaded by a torque load without normal forces.
 
