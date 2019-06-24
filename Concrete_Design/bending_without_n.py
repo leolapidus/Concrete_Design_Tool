@@ -20,6 +20,11 @@ def bending(model, values, concrete_type, exp):
     ----------
     model : class
         class method that contains the Finite Element Analysis
+
+    Returns
+    -------
+    erf_As : float
+        necessary longitudial reinforcement
     """
     m = []
     erf_As = []
