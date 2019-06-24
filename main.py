@@ -24,7 +24,7 @@ for i in range(5):
 #Beam 2
 
 for i in range(5):
-    model.add_node(id=i+22, x=i*0.2+0.2, y=1)
+    model.add_node(id=i+22, x=i*0.2+0.2, y=1.1+i*0.1)
 
 model.add_beam(id=22, node_ids=[6, 22], element_type='beam')
     
@@ -56,14 +56,13 @@ model.calculate_internal_forces()
 plot = Plot2D()
                 
 plot.geometry(model)
-# plot.plot_geometry()
 plot.internal_forces(model)
 plot.plot_internal_forces(model)
 
 
 design = Design(model, concrete_type, expositionclass)
 design.remove_designing()
-design.bending_design()
+design.bending_design_with_n()
 design.shear_design()
 
 plot.reinforcement(model)
