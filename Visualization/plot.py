@@ -52,10 +52,10 @@ class Plot2D:
 
         for i, ele in enumerate(model.elements):
             if type(ele)==BeamColumnElement:
-                self.N.append(ele.local_internal_forces[0])
+                self.N.append(ele.local_internal_forces[0]*-1)
                 self.V.append(ele.local_internal_forces[1])
                 self.M.append(ele.local_internal_forces[2])
-                self.N.append(ele.local_internal_forces[3]*-1)
+                self.N.append(ele.local_internal_forces[3]*1)
                 self.V.append(ele.local_internal_forces[4]*-1)
                 self.M.append(ele.local_internal_forces[5]*-1)
 
@@ -147,15 +147,15 @@ class Plot2D:
         #Axes 2: show normal forces
 
         ax2.plot(self.x, self.y, 'k')
-        segments_n = list()
+        # segments_n = list()
         
-        for i in range(len(x)):
-                segments_n.append(
-                    [(x[i], y[i]),
-                    (self.x_n[i], self.y_n[i])]
-                )
-        line_segments_n = LineCollection(segments_n, linewidths=0.5, colors='darkgrey')
-        ax2.add_collection(line_segments_n)
+        # for i in range(len(x)):
+        #         segments_n.append(
+        #             [(x[i], y[i]),
+        #             (self.x_n[i], self.y_n[i])]
+        #         )
+        # line_segments_n = LineCollection(segments_n, linewidths=0.5, colors='darkgrey')
+        # ax2.add_collection(line_segments_n)
 
         verts_n = list()
         l = int((len(x))/2)
@@ -169,24 +169,25 @@ class Plot2D:
         poly_verts_n = PolyCollection(verts_n, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax2.add_collection(poly_verts_n)
         ax2.autoscale()
+        ax2.axis('equal')
         ax2.axis('off')
         ax2.set_title('Normalkraftverlauf')
 
-        # for i, value in enumerate(self.N):
-        #     ax2.annotate(round(value, 3), (self.x_n[i], self.y_n[i]))
+        for i, value in enumerate(self.N):
+            ax2.annotate(round(value, 3), (self.x_n[i], self.y_n[i]))
 
         #Axes3: show shear force
 
         ax3.plot(self.x, self.y, 'k')
-        segments_v = list()
+        # segments_v = list()
         
-        for i in range(len(x)):
-                segments_v.append(
-                    [(x[i], y[i]),
-                    (self.x_v[i], self.y_v[i])]
-                )
-        line_segments_v = LineCollection(segments_v, linewidths=0.5, colors='darkgrey')
-        ax3.add_collection(line_segments_v)
+        # for i in range(len(x)):
+        #         segments_v.append(
+        #             [(x[i], y[i]),
+        #             (self.x_v[i], self.y_v[i])]
+        #         )
+        # line_segments_v = LineCollection(segments_v, linewidths=0.5, colors='darkgrey')
+        # ax3.add_collection(line_segments_v)
 
         verts_v = list()
         l = int((len(x))/2)
@@ -200,27 +201,28 @@ class Plot2D:
         poly_verts_v = PolyCollection(verts_v, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax3.add_collection(poly_verts_v)
         ax3.autoscale()
+        ax3.axis('equal')
         ax3.axis('off')
         ax3.set_title('Querkraftverlauf')
 
         
-        # for i, value in enumerate(self.V):
-        #     ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
+        for i, value in enumerate(self.V):
+            ax3.annotate(round(value, 3), (self.x_v[i], self.y_v[i]))
 
         
         #Axes 4: show bending moment
         #TODO: change direction of plot
 
         ax4.plot(self.x, self.y, 'k')
-        segments_m = list()
+        # segments_m = list()
         
-        for i in range(len(x)):
-                segments_m.append(
-                    [(x[i], y[i]),
-                    (self.x_m[i], self.y_m[i])]
-                )
-        line_segments_m = LineCollection(segments_m, linewidths=0.5, colors='darkgrey')
-        ax4.add_collection(line_segments_m)
+        # for i in range(len(x)):
+        #         segments_m.append(
+        #             [(x[i], y[i]),
+        #             (self.x_m[i], self.y_m[i])]
+        #         )
+        # line_segments_m = LineCollection(segments_m, linewidths=0.5, colors='darkgrey')
+        # ax4.add_collection(line_segments_m)
 
         verts_m = list()
         l = int((len(x))/2)
@@ -234,14 +236,15 @@ class Plot2D:
         poly_verts_m = PolyCollection(verts_m, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax4.add_collection(poly_verts_m)
         ax4.autoscale()
+        ax4.axis('equal')
         ax4.axis('off')
         ax4.set_title('Momentenverlauf')
 
         
         
 
-        # for i, value in enumerate(self.M):
-        #     ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
+        for i, value in enumerate(self.M):
+            ax4.annotate(round(value, 3), (self.x_m[i], self.y_m[i]))
         
         
         plt.get_current_fig_manager().window.state('zoomed')
@@ -263,8 +266,8 @@ class Plot2D:
             
                 normalized_vector = _normal_vector/np.linalg.norm(_normal_vector)
 
-                v_1 = normalized_vector*(self.As[i])
-                v_2 = normalized_vector*(self.asw[i])
+                v_1 = normalized_vector*(self.As[i]/10)
+                v_2 = normalized_vector*(self.asw[i]/10)
                 
 
                 self.x_As.append(ele.nodes[0]._x+v_1[0])
@@ -327,6 +330,7 @@ class Plot2D:
                         fontsize=9, xytext=(3,-5), textcoords='offset points', ha='left', va='top')
         
         ax[0].autoscale()
+        ax[0].axis('equal')
         ax[0].set_title('Biegebewehrung')
 
         # for i, value in enumerate(self.As):
@@ -357,7 +361,8 @@ class Plot2D:
                 )
         poly_verts_asw = PolyCollection(verts_asw, linewidths=0.5, facecolors= 'lightblue', edgecolors='darkgrey')
         ax[1].add_collection(poly_verts_asw)
-        ax[1].autoscale()
+        #ax[1].autoscale()
+        ax[1].axis('equal')
         ax[1].axis('off')
         asw = round(max(self.asw),3)
         ax[1].annotate(f'Maximale Querkaftbewehrung \n{asw} cm²/m', xy=(0,1), xycoords='axes fraction',
