@@ -17,11 +17,8 @@ def visualization_sensitivity_as(b, h, As, b_min, b_max, h_min, h_max):
     As_max = np.amax(As)
     As_min = np.amin(As)
 
-    intervall_As = np.linspace(As_max, As_min, 5)
     intervall_b = b[1]-b[0]
-    db = intervall_b/2
     intervall_h = h[1]-h[0]
-    dh = intervall_h/2
 
 
     y, x = np.mgrid[slice(h_min, h_max + intervall_h, intervall_h),
@@ -51,9 +48,7 @@ def visualization_sensitivity_asw(b, h, asw, b_min, b_max, h_min, h_max):
     asw_min = np.amin(asw)
 
     intervall_b = b[1]-b[0]
-    db = intervall_b/2
     intervall_h = h[1]-h[0]
-    dh = intervall_h/2
 
     y, x = np.mgrid[slice(h_min, h_max + intervall_h, intervall_h),
                     slice(b_min, b_max + intervall_b, intervall_b)]
