@@ -14,7 +14,7 @@ expositionclass = 'XC3'
 b = 1   #m
 h = 0.5 #m
 
-use_hyperjet = True
+use_hyperjet = False
 if use_hyperjet:
     b = hj.HyperJet(b, [1,0])
     h = hj.HyperJet(h, [0,1])
