@@ -108,5 +108,5 @@ def shear_reinforcement(values, model, concrete_type):
             del v[0]        
                 
     
-    print(erf_asw)
+    
     return erf_asw
