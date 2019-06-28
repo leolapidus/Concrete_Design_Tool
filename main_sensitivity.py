@@ -18,13 +18,13 @@ val = Values()
 concrete_type = 'c2530'
 expositionclass = 'XC3'
 
-b_min = 0.4
+b_min = 1.0
 b_max = 3.0
 delt_b = 50
 b = np.linspace(b_min, b_max, delt_b)   #m
 
 h_min = 0.4
-h_max = 3.0
+h_max = 1.8
 delta_h = 50
 h = np.linspace(h_min, h_max, delta_h) #m
 
