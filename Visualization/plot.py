@@ -227,7 +227,7 @@ class Plot2D:
 
         for i, ele in enumerate(model.elements):
             if type(ele)==BeamColumnElement:
-                self.As.append(ele.bending_reinforcement[0])
+                self.As.append(ele.bending_reinforcement[0])#?
                 self.asw.append(ele.shear_reinforcement[0])
 
             
