@@ -5,7 +5,8 @@ bending and shear loads"""
 
 from Concrete_Design.values import Values
 from FE_code.beam_column_element import BeamColumnElement
-from Concrete_Design.bending_without_n import bending_without_n
+from Concrete_Design.bending_without_n_table import bending_without_n_table
+from Concrete_Design.bending_without_n_iteration import bending_without_n_iteration
 from Concrete_Design.bending_with_n import bending_with_n
 from Concrete_Design.shear import shear_reinforcement
 from Concrete_Design.debug_print import debug
@@ -46,7 +47,7 @@ class Design:
     #==== designing
 
     
-    def bending_design_without_n(self):
+    def bending_design_without_n(self, value):
         """Concrte design of a beam element under bending load.
 
         Returns
@@ -55,7 +56,10 @@ class Design:
             Area of necessary reinforcement
         """
         #bending without normal force
-        As = bending_without_n(self.model, self.values, self.concrete_type, self.exp)
+        if value == 'table':
+            As = bending_without_n_table(self.model, self.values, self.concrete_type, self.exp)
+        elif value == 'iteration':
+            As = bending_without_n_iteration(self.model, self.values, self.concrete_type, self.exp)
 
         #add reinforcement to element information 
 

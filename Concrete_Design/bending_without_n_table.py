@@ -13,7 +13,7 @@ from Concrete_Design.debug_print import debug
 #TODO: Unterscheiden zwischen Feldbereich und Stützbereich 
 
 
-def bending_without_n(model, values, concrete_type, exp):
+def bending_without_n_table(model, values, concrete_type, exp):
     """Calculate the necessery longitudial reinforcment of a
     beam that is loaded by a torque load without normal forces.
 
@@ -54,6 +54,10 @@ def bending_without_n(model, values, concrete_type, exp):
 
             omega = values.interpolate_omega(mue_eds)
             sigma = values.interpolate_sigma(mue_eds)
+
+            print('mue_eds', mue_eds)
+            print('omega', omega)
+            print('sigma', sigma)
 
             As = 1/sigma*(omega*ele.b*values.static_usable_height(ele.h)*fcd)*10000
 

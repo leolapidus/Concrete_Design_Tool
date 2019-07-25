@@ -62,8 +62,8 @@ model.add_dirichlet_condition(dof=(26, 'v'), value=0)
 
 
 
-As = sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass)
-print(As)
+As = sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass, 'table')
+
 
 visualization_sensitivity_as(b, h, As, b_min, b_max, h_min, h_max)
 

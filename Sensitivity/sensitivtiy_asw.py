@@ -21,7 +21,7 @@ def sensitivity_asw(model, b, h, younges_modulus, concrete_type, expositionclass
             model.calculate_internal_forces()
             design = Design(model, concrete_type, expositionclass)
             design.remove_designing()
-            design.bending_design_without_n()
+            #design.bending_design_without_n()
             design.shear_design()
             for ele in model.elements:
                 if type(ele)==BeamColumnElement:

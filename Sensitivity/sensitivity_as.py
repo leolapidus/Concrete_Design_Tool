@@ -5,7 +5,7 @@ import numpy as np
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.designing import Design
 
-def sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass):
+def sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass, value):
     
     As_max = np.zeros((len(b),len(h)))
     As = []
@@ -21,7 +21,7 @@ def sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass)
             model.calculate_internal_forces()
             design = Design(model, concrete_type, expositionclass)
             design.remove_designing()
-            design.bending_design_without_n()
+            design.bending_design_without_n(value)
             design.shear_design()
             for ele in model.elements:
                 if type(ele)==BeamColumnElement:

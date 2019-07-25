@@ -11,7 +11,7 @@ model = Model(analysis_type='beam')
 val = Values()
 concrete_type = 'c2530'
 expositionclass = 'XC3'
-b = 1   #m
+b = 0.5   #m
 h = 0.5 #m
 
 use_hyperjet = False
@@ -54,7 +54,7 @@ model.add_dirichlet_condition(dof=(26, 'v'), value=0)
 #constant distributed load
 
 for i in range(5):
-    model.add_distributed_load(id=i+100, structural_element_id=i+22, load=-1000)
+    model.add_distributed_load(id=i+100, structural_element_id=i+22, load=-100)
 
 
 model.remove_solution()
@@ -64,13 +64,13 @@ model.calculate_internal_forces()
 plot = Plot2D()
                 
 plot.geometry(model)
-plot.internal_forces(model)
-plot.plot_internal_forces(model)
+# plot.internal_forces(model)
+# plot.plot_internal_forces(model)
 
 
 design = Design(model, concrete_type, expositionclass)
 design.remove_designing()
-design.bending_design_without_n()
+design.bending_design_without_n('table')
 design.shear_design()
 
 plot.reinforcement(model)
