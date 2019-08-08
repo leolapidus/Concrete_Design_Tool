@@ -40,6 +40,6 @@ class TestQuad(TestCase):
                 [  62.5       , -333.33333333,  187.5       , -291.66666667,  -62.5       ,    41.66666667, -187.5       ,  583.33333333]
             ]
         )
-        #assert_almost_equal(k_actual, k_desired, decimal=7)
+        assert_almost_equal(k_actual, k_desired, decimal=7)
         print(k_actual)
    

@@ -227,7 +227,7 @@ class BeamColumnElement(Element):
         for i_node in self.nodes:
             u_e.extend([i_node.results['u'], i_node.results['v'], i_node.results['phi']])
         transform_matrix = self.get_transform_matrix()
-        u_l = transform_matrix @ u_e
+        u_l = np.dot(transform_matrix, u_e)
         K_e_l = self.calculate_elastic_stiffness_matrix_local()
         f_l = np.dot(K_e_l, u_l)
         return f_l

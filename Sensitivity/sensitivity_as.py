@@ -7,7 +7,7 @@ from Concrete_Design.designing import Design
 
 def sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass, value):
     
-    As_max = np.zeros((len(b),len(h)))
+    As_max = np.zeros((len(b),len(h)), dtype=object)
     As = []
 
     for j in range(len(h)):

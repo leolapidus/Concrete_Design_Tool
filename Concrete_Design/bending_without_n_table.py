@@ -34,8 +34,7 @@ def bending_without_n_table(model, values, concrete_type, exp):
     for i, ele in enumerate(model.elements):
         if type(ele)==BeamColumnElement:
             m.append(ele.local_internal_forces[2])
-            m.append(ele.local_internal_forces[5]*-1)
-            #m_ed = abs(max(m))*0.001
+            m.append(ele.local_internal_forces[5]*(-1))
             m_ed = max(abs(m[0]), abs(m[1]))
             m_ed = m_ed*0.001
 
@@ -54,10 +53,6 @@ def bending_without_n_table(model, values, concrete_type, exp):
 
             omega = values.interpolate_omega(mue_eds)
             sigma = values.interpolate_sigma(mue_eds)
-
-            print('mue_eds', mue_eds)
-            print('omega', omega)
-            print('sigma', sigma)
 
             As = 1/sigma*(omega*ele.b*values.static_usable_height(ele.h)*fcd)*10000
 

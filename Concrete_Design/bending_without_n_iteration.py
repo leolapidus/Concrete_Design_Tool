@@ -52,11 +52,11 @@ def bending_without_n_iteration(model, values, concrete_type, exp):
             alpha_r = (3*abs(eps_c_2)-2)/(3*abs(eps_c_2))
             k_a = (abs(eps_c_2)*(3*abs(eps_c_2)-4)+2)/(2*abs(eps_c_2)*(3*abs(eps_c_2)-2))
 
-            F_cd = -alpha_r*ele.b*x*fcd
+            F_cd = -1*alpha_r*ele.b*x*fcd
 
             z = d-k_a*x
 
-            m_rds = -F_cd*z*1000
+            m_rds = -1*F_cd*z*1000
 
             diff = abs(m_rds-m_ed)
 
@@ -73,9 +73,9 @@ def bending_without_n_iteration(model, values, concrete_type, exp):
                         alpha_r = (3*abs(eps_c_2)-2)/(3*abs(eps_c_2))
                         k_a = (abs(eps_c_2)*(3*abs(eps_c_2)-4)+2)/(2*abs(eps_c_2)*(3*abs(eps_c_2)-2))
 
-                    F_cd = -alpha_r*ele.b*x*fcd
+                    F_cd = -1*alpha_r*ele.b*x*fcd
                     z = d-k_a*x
-                    m_rds = -F_cd*z*1000
+                    m_rds = -1*F_cd*z*1000
 
                     diff = abs(m_rds-m_ed)
 
@@ -91,7 +91,7 @@ def bending_without_n_iteration(model, values, concrete_type, exp):
                 eps_c_2 = eps_c_2
                 eps_s_1 = eps_s_1
                 F_cd = F_cd
-                print(eps_c_2)
+                
             elif m_rds < m_ed:
                 eps_c_2 = -3.5
                 while diff > 0.001:
@@ -99,9 +99,9 @@ def bending_without_n_iteration(model, values, concrete_type, exp):
                     x = abs(eps_c_2)/(abs(eps_c_2)+abs(eps_s_1))*d
                     alpha_r = (3*abs(eps_c_2)-2)/(3*abs(eps_c_2))
                     k_a = (abs(eps_c_2)*(3*abs(eps_c_2)-4)+2)/(2*abs(eps_c_2)*(3*abs(eps_c_2)-2))
-                    F_cd = -alpha_r*ele.b*x*fcd
+                    F_cd = -1*alpha_r*ele.b*x*fcd
                     z = d-k_a*x
-                    m_rds = -F_cd*z*1000
+                    m_rds = -1*F_cd*z*1000
                     diff = abs(m_rds-m_ed)
                     if m_rds < m_ed:
                         eps_s_1 = eps_s_1 - b
@@ -113,7 +113,7 @@ def bending_without_n_iteration(model, values, concrete_type, exp):
                 m_rds = m_rds
                 eps_c_2 = eps_c_2
                 eps_s_1 = eps_s_1
-                print(eps_s_1)
+                
                 F_cd = F_cd
             elif abs(m_rds-m_ed)<0.001:
                 m_rds=m_rds

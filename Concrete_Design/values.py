@@ -4,10 +4,7 @@ from FE_code.model import Model
 
 
 class Values:
-    #TODO: Betondeckung in Abhängigkeit von den Expositionsklassen
-    #Druck
-    # fcd = 0.85*fck/1,5
-
+    
     def __init__(self):
         self._dsl = 20
         self._dbu = 10
@@ -108,7 +105,7 @@ class Values:
         self.c_nom_l = c_min_l + d_c_dev
         self.c_nom_b = c_min_b + d_c_dev
 
-        return c_min_dur
+        return (self.c_nom_b, self.c_nom_l)
 
     def static_usable_height(self, h):
 
@@ -144,7 +141,7 @@ class Values:
                          436.7, 436.4, 436.1, 435.8, 435.5, 435.3, 
                          435.0, 434.8, 394.5, 350.1, 307.1  
                         ]
-        #return self.mue_eds, self.omega_1, self.sigma_sd
+        return (self.mue_eds, self.omega_1, self.sigma_sd)
 
     def interpolate_omega(self, value):
         # interpolation of mue_eds

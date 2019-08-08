@@ -18,7 +18,7 @@ from FE_code.distributed_load import DistributedLoad
 from FE_code.linear_load import LinearLoad
 from FE_code.assembler import Assembler
 from FE_code.element import Element
-
+from FE_code import cholesky
 
 class Model:
     """
@@ -291,7 +291,7 @@ class Model:
             self._elements[id] = SingleLoad(id, self._nodes[node_id], **load_types)
             self.neumann_conditions[id] = self._elements[id]
            
-    def add_distributed_load(self, id, structural_element_id, load):
+    def add_distributed_load(self, id, structural_element_id, load, rho, b, h):
         """Add an element load to the model.
 
         .. note::
@@ -325,9 +325,14 @@ class Model:
         structural_element = self.get_element(structural_element_id)
                 
         if self.analysis_type=='beam':
-            self._elements[id] = DistributedLoad(id, structural_element, load)
+            self._elements[id] = DistributedLoad(id, structural_element, load, rho, b, h)
             self.neumann_conditions[id] = self._elements[id]
             structural_element.load_elements.append(self._elements[id])
+            if len(structural_element.load_elements)>1:
+                del structural_element.load_elements[0]
+            else:
+                pass
+
         
 
     def add_linear_load(self, id, structural_element_id, load_left, load_right):
@@ -375,7 +380,7 @@ class Model:
         for element_id, element in list(self._elements.items()):
             if type(element)==SingleLoad or type(element)==DistributedLoad or type(element)==LinearLoad:
                 del self._elements[element_id]
-    
+                   
     def solve(self):
         """Assembles the Linear system of equations `K.u=f` and
         solves it using reduction, and calculates the vector of
@@ -386,15 +391,15 @@ class Model:
 
         dof_count = assembler.dof_count     # number of dofs
         
-        u = np.zeros(dof_count)
+        u = np.zeros(dof_count, dtype=object)
 
         # Applying Dirichlet boundary conditions
         for dof, value in self.dirichlet_conditions.items():
             index = assembler.index_of_dof(dof)
             u[index] = value
         
-        k = np.zeros((dof_count, dof_count))
-        f = np.zeros(dof_count)
+        k = np.zeros((dof_count, dof_count), dtype=object)
+        f = np.zeros(dof_count, dtype=object)
         
         # Assemble k matrix & f vector
         assembler.assemble_matrix(k, lambda element: element.calculate_elastic_stiffness_matrix())
@@ -404,11 +409,19 @@ class Model:
 
         # Reduce the system and solve it
         a = k[:free_count, :free_count]
-        b = f[:free_count] - k[:free_count, free_count:] @ u[free_count:]
-        try: u[:free_count] = la.solve(a, b)
-        except np.linalg.LinAlgError as err:
-            if 'Singular matrix' in str(err): return 'Singular matrix'
-            else: raise
+        b = f[:free_count] - np.dot(k[:free_count, free_count:], u[free_count:])
+
+        use_cholesky = True
+
+        if use_cholesky:
+            u[:free_count] = cholesky.solve(a, b)
+            
+        else:
+            try: 
+                u[:free_count] = la.solve(a, b)
+            except np.linalg.LinAlgError as err:
+                if 'Singular matrix' in str(err): return 'Singular matrix'
+                else: raise
         
               
         # Set displacement as attributes of nodes

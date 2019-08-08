@@ -1,4 +1,4 @@
-"""This module only contains the distributed load element.
+"""This module only contains the selfweight load element.
 
 """
 
@@ -7,8 +7,8 @@ import numpy.linalg as la
 
 from FE_code.element import Element
 
-class DistributedLoad(Element):
-    """Creates a Distributed Load on the Nodes of the Element
+class SelfweightLoad(Element):
+    """Creates a Selfweight Load on the Nodes of the Element
     
     Attributes
     ----------
@@ -24,10 +24,10 @@ class DistributedLoad(Element):
     Examples
     --------
     Create a single load on one Node
-        >>> DistributedLoadBeam(node, fx=4, fy=5, mz=8)
+        >>> SelfweightLoadBeam(node, fx=4, fy=5, mz=8)
     """
 
-    def __init__(self, id, structural_element, distributed_load, rho, b, h):
+    def __init__(self, id, structural_element, selfweight_load, b, h):
         """Creates a single load
     
         Parameters
@@ -36,15 +36,16 @@ class DistributedLoad(Element):
             Unique ID of the element
         structural_element : object
             Beam Column Element
-        distributed load : keyword arguments
-            distributed load on the element
+        selfweight load : keyword arguments
+            selfweight load on the element
+        b :
+        h :
         
         """
         self.id = id
         self.structural_element = structural_element
         self._nodes = structural_element.nodes 
-        self._distributed_load = distributed_load
-        self._rho = rho
+        self._selfweight_load = selfweight_load
         self._b = b
         self._h = h
         
@@ -92,16 +93,6 @@ class DistributedLoad(Element):
         
         return la.norm(b-a)
 
-    def get_angle(self):
-        element_vector = self.get_vector()
-        reference_vector = np.array([1, 0])
-        dot_product = np.dot(element_vector, reference_vector)
-        length = self.get_length()
-        angle = np.arccos(dot_product/length)
-        
-        return angle
-
-
     def get_transform_matrix(self):
         """ Transformation matrix.
 
@@ -110,8 +101,16 @@ class DistributedLoad(Element):
         transform_matrix: ndarray
             Transformation matrix.
         """
-        s = np.sin(self.get_angle())
-        c = np.cos(self.get_angle())
+
+        element_vector = self.get_vector()
+        reference_vector = np.array([1, 0])
+        dot_product = np.dot(element_vector, reference_vector)
+        length = self.get_length()
+        
+        angle = np.arccos(dot_product/length)
+
+        s = np.sin(angle)
+        c = np.cos(angle)
 
         transform_matrix = np.array([[c, s, 0, 0, 0, 0],
                                     [-s, c, 0, 0, 0, 0],
@@ -134,14 +133,11 @@ class DistributedLoad(Element):
         """
         
         l = self.get_length()
-        q = self._distributed_load
-        g = -1*self._rho*(self._b)*(self._h)
         angle = self.get_angle()
-        
-
-        fx = 0.0+g*np.sin(angle)*l/2
-        fy = q*l/2+g*np.cos(angle)*l/2
-        mz = q*l**2/12+g*l**2*np.cos(angle)/48
+        g = -1*self._selfweight_load*self._b*self._h
+        fx = g*np.sin(angle)*l/2
+        fy = g*np.cos(angle)*l/2
+        mz = g*l**2*np.cos(angle)/48
         
         load_vector_l = np.array([fx, fy, -mz, fx, fy, mz])
 
