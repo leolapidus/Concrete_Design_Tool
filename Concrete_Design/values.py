@@ -107,9 +107,10 @@ class Values:
 
         return (self.c_nom_b, self.c_nom_l)
 
-    def static_usable_height(self, h):
+    def static_usable_height(self, h, exp):
 
-        
+        self.c_nom_b=self.concrete_cover(exp)[0]
+        self.c_nom_l=self.concrete_cover(exp)[1]
 
         d1 = max(self._dsl/2 + self.c_nom_l, 
                  self._dsl/2 + self._dbu + self.c_nom_b
@@ -143,7 +144,8 @@ class Values:
                         ]
         return (self.mue_eds, self.omega_1, self.sigma_sd)
 
-    def interpolate_omega(self, value):
+
+    def _interpolate(self, value, column):
         # interpolation of mue_eds
        
         i_0, i_1 = None, None
@@ -156,25 +158,15 @@ class Values:
         # if i_1 or i_0 <=-5:
         #     raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
 
-        omega = self.omega_1[i_0] + (self.omega_1[i_1]-self.omega_1[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
+        interpolated_value = column[i_0] + (column[i_1]-column[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
 
-        return omega
+        return interpolated_value
+
+    def interpolate_omega(self, value):
+        return self._interpolate(value, self.omega_1)
 
     def interpolate_sigma(self, value):
-        # interpolation of mue_eds
-        i_0, i_1 = None, None
-        for i, mue in enumerate(self.mue_eds):
-            if mue > value:
-                i_1 = i
-                i_0 = i-1
-                break
-
-        # if not i_0 or i_0 <0:
-        #     raise Exception("Value {} not found in array {}".format(value, self.mue_eds))
-
-        sigma = self.sigma_sd[i_0] + (self.sigma_sd[i_1]-self.sigma_sd[i_0])/(self.mue_eds[i_1]-self.mue_eds[i_0]) * (value-self.mue_eds[i_0])
-
-        return sigma
+        return self._interpolate(value, self.sigma_sd)
 
     #TODO: table with number of reinforcement bars
 
