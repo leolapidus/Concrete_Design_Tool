@@ -83,7 +83,7 @@ if use_hyperjet:
 
 #As = sensitivity_as(model, b, h, younges_modulus, concrete_type, expositionclass, 'table')
 
-#steepest_descent(func = 'mue_eds', x=x, solvertype = 'linear', SV=SV)
+#steepest_descent(func = 'mue_eds', x=x, solvertype = 'linear' ,mp =mp)
 
 
 
