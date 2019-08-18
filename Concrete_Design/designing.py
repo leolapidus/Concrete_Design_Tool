@@ -97,7 +97,7 @@ class Design:
             Area of necessary reinforcement per meter
         """
 
-        asw = shear_reinforcement(self.values, self.model, self.concrete_type)
+        asw = shear_reinforcement(self.values, self.model, self.concrete_type, self.exp)
 
         #add reinforcement to element information
 

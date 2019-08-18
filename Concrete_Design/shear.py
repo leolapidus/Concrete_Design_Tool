@@ -34,7 +34,7 @@ def minimal_shear_reinforcement(values, model, concrete_type, b):
     
     return asw_min
 
-def shear_reinforcement(values, model, concrete_type):
+def shear_reinforcement(values, model, concrete_type, expositionclass):
     """Calculate the shear reinforcment that is bigger than the minimal
     necessary shear reinforcement.
 
@@ -61,7 +61,7 @@ def shear_reinforcement(values, model, concrete_type):
 
     for ele in model.elements:
         if type(ele)==BeamColumnElement:
-            z = 0.9*values.static_usable_height(ele.h)
+            z = 0.9*values.static_usable_height(ele.h, expositionclass)
 
             n.append(ele.local_internal_forces[0])
             n.append(ele.local_internal_forces[3]*-1)
