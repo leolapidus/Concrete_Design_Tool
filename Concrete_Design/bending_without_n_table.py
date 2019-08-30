@@ -37,28 +37,21 @@ def bending_without_n_table(model, values, concrete_type, exp):
             m.append(ele.local_internal_forces[5]*(-1))
             m_ed = max(abs(m[0]), abs(m[1]))
             m_ed = m_ed*0.001
-            
-
             #TODO: if abfrage für hyperjet
             #diff_m_ed = m_ed.g
 
             #debug('m_ed')
-
-            
-            
+            #            
             mue_eds = m_ed/(ele.b*(values.static_usable_height(ele.h, exp)**2)*fcd)
-            
+
             #debug('mue_eds')
 
             _table=values.design_table_values()
-
             omega = values.interpolate_omega(mue_eds)
-            
             sigma = values.interpolate_sigma(mue_eds)
-
-            As = 1/sigma*(omega*ele.b*values.static_usable_height(ele.h, exp)*fcd)*10000
-            
+            As = 1/sigma*(omega*ele.b*values.static_usable_height(ele.h, exp)*fcd)*10000 
             erf_As.append(1/sigma*(omega*ele.b*values.static_usable_height(ele.h, exp)*fcd)*10000) # cm²
+            
 
             #diff_erf_As.append(erf_As[i].g)
             #debug('As')

@@ -20,9 +20,13 @@ class HyperJetResponseWrapper():
 
         if self.current_x is None:
             return True
-        r=[self.current_x[0].f, self.current_x[1].f]
-        x=[x[0].f, x[1].f]
-        return not np.allclose(x, r, rtol=1e-12, atol=1e-12)
+        else:
+            cur = []
+            past = []
+            for i in range(int(len(self.current_x))):
+                cur.append(self.current_x[i].f)
+                past.append(x[i].f)
+        return not np.allclose(past, cur, rtol=1e-12, atol=1e-12)
 
 
 
@@ -31,17 +35,18 @@ class HyperJetResponseWrapper():
 
 
 
-    def evaluate(self, x, parameters):
+    def evaluate(self, x, parameters, parametrization):
 
         if self.state_changed(x):
-            print("Evaluate response!")
-            result = self.function(x, parameters)
+            #print("Evaluate response!")
+            result = self.function(x, parameters, parametrization)
             self._f = result.f
             self._g = result.g
             self._h = result.h
             self.update_state(x)
         else:
-            print("Skip re-evaluation of response!")
+            pass
+            #print("Skip re-evaluation of response!")
 
 
 
@@ -49,10 +54,10 @@ class HyperJetResponseWrapper():
     def f(x, *args):
         if len(args)==1:
             _self = args[0][0]
-            _self.evaluate(x, args[0][1])
+            _self.evaluate(x, args[0][1], args[0][2])
         else:
             _self = args[0]
-            _self.evaluate(x, args[1])
+            _self.evaluate(x, args[1], args[2])
         return _self._f
 
 
@@ -61,10 +66,10 @@ class HyperJetResponseWrapper():
     def g(x, *args):
         if len(args)==1:
             _self = args[0][0]
-            _self.evaluate(x, args[0][1])
+            _self.evaluate(x, args[0][1], args[0][2])
         else:
             _self = args[0]
-            _self.evaluate(x, args[1])
+            _self.evaluate(x, args[1], args[2])
         return _self._g
 
 
@@ -73,8 +78,8 @@ class HyperJetResponseWrapper():
     def h(x, *args):
         if len(args)==1:
             _self = args[0][0]
-            _self.evaluate(x, args[0][1])
+            _self.evaluate(x, args[0][1], args[0][2])
         else:
             _self = args[0]
-            _self.evaluate(x, args[1])
+            _self.evaluate(x, args[1], args[2])
         return _self._h

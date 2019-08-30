@@ -27,7 +27,7 @@ class DistributedLoad(Element):
         >>> DistributedLoadBeam(node, fx=4, fy=5, mz=8)
     """
 
-    def __init__(self, id, structural_element, distributed_load, rho, b, h):
+    def __init__(self, id, structural_element, distributed_load, rho):
         """Creates a single load
     
         Parameters
@@ -45,8 +45,8 @@ class DistributedLoad(Element):
         self._nodes = structural_element.nodes 
         self._distributed_load = distributed_load
         self._rho = rho
-        self._b = b
-        self._h = h
+        # self._b = b
+        # self._h = h
         
 
     @property
@@ -135,7 +135,7 @@ class DistributedLoad(Element):
         
         l = self.get_length()
         q = self._distributed_load
-        g = -1*self._rho*(self._b)*(self._h)
+        g = -1*self._rho*(self.structural_element.b)*(self.structural_element.h)
         angle = self.get_angle()
         
 
