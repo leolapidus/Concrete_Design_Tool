@@ -13,7 +13,7 @@ from Sensitivity.model_parameters import ModelParameters
 
 import hyperjet as hj
 
-class Parametrization:
+class ParametrizationTwoSpanBeam:
     
     def __init__(self, mp):
         """
@@ -21,74 +21,64 @@ class Parametrization:
         """
         self.mp = mp
 
-    def vector_of_parameters(self, b0, h0):
-        a = []
-        b = [b0 for s in range(self.mp.elements_beam1+self.mp.elements_beam2)]
-        h = [h0 for d in range(self.mp.elements_beam1+self.mp.elements_beam2)]
-        for i in range(2*(self.mp.elements_beam1+self.mp.elements_beam2)):
-            if i %2 ==0:
-                a.append(hj.HyperJet.variable(value=b[int(i/2)], size=2*(self.mp.elements_beam1+self.mp.elements_beam2), index=i))
-            else:
-                a.append(hj.HyperJet.variable(value=h[int(i/2-0.5)], size=2*(self.mp.elements_beam1+self.mp.elements_beam2), index=i))
-            # a.append(h0)
-        return a
+    
 
-    def create_model(self,a):
-        self.mp.model.reset_model()
+    def create_model(self,v_parameters):
+        mp = self.mp
+        mp['model'].reset_model()
         n_nodes = []
         #number of nodes
-        if self.mp.beams == 1:
-            for i in range(self.mp.elements_beam1+1):
+        if mp['beams'] == 1:
+            for i in range(mp['elements_beam1']+1):
                 n_nodes.append(i+1)
         else:
-            for i in range(self.mp.elements_beam1 + self.mp.elements_beam2 + 1):
+            for i in range(mp['elements_beam1'] + mp['elements_beam2'] + 1):
                 n_nodes.append(i+1)
 
         #supports/dirichlet conditions
         supports = []
         supports.append(n_nodes[0])
-        if self.mp.beams == 1:
+        if mp['beams'] == 1:
             supports.append(n_nodes[-1])
         else:
-            supports.append(n_nodes[self.mp.elements_beam1])
+            supports.append(n_nodes[mp['elements_beam1']])
             supports.append(n_nodes[-1])
         
         #add nodes to model
         for i in range(len(n_nodes)):
-            if i <= self.mp.elements_beam1:
-                self.mp.model.add_node(id=i+1, x=i*self.mp.l1/self.mp.elements_beam1, y=0.0)
+            if i <= mp['elements_beam1']:
+                mp['model'].add_node(id=i+1, x=i*mp['l1']/mp['elements_beam1'], y=0.0)
             else:
-                self.mp.model.add_node(id=i+1, x=i*self.mp.l2/self.mp.elements_beam2, y=0.0)
+                mp['model'].add_node(id=i+1, x=i*mp['l2']/mp['elements_beam2'], y=0.0)
 
         #add Dirichlet conditions to model
         for i in range(len(supports)):
-            self.mp.model.add_dirichlet_condition(dof=(supports[i], 'v'), value=0)
-        self.mp.model.add_dirichlet_condition(dof=(1, 'u'), value=0)
+            mp['model'].add_dirichlet_condition(dof=(supports[i], 'v'), value=0)
+        mp['model'].add_dirichlet_condition(dof=(1, 'u'), value=0)
 
         #add beams to model (every optimization step overwrite the beam elments with new parameters)
         for i in range(len(n_nodes)-1):      
-            self.mp.model.add_beam(id=i+1, node_ids=[i+1, i+2], element_type='beam', E=self.mp.younges_modulus, b=a[i*2], h=a[i*2+1])
+            mp['model'].add_beam(id=i+1, node_ids=[i+1, i+2], element_type='beam', E=mp['younges_modulus'], b=v_parameters[i*2], h=v_parameters[i*2+1])
 
         #reset and add new neumann conditions to model
-        self.mp.model.reset_neumann_conditions()
+        mp['model'].reset_neumann_conditions()
         for a in range(len(n_nodes)-1):
-            self.mp.model.add_distributed_load(id=a+100, structural_element_id=a+1, load=self.mp.load, rho=self.mp.rho)
+            mp['model'].add_distributed_load(id=a+100, structural_element_id=a+1, load=mp['load'], rho=mp['rho'])
         
-        return self.mp.model
-
-    def solve_model(self):
-        self.mp.model.remove_solution()
-        self.mp.model.solve()   
-        self.mp.model.calculate_internal_forces()
-        
-
+        return mp['model']
 
     def tsb_free(self, x):
         return x
-    
+ 
+    def define_shape(self, x):
+        if self.mp['shape']=='linear':
+            return self.create_linear_tsb(x)
+        if self.mp['shape']=='cove':
+            return self.create_cove_tsb(x)
 
-    def tsb_linear(self, x):
+    def create_linear_tsb(self, x):
         """
+        x: array of parameters
         tsb = two spann beam
                          ___
                      ___|   |
@@ -96,35 +86,42 @@ class Parametrization:
              ___|   |   |   |
         h_a |___|___|___|___|
     	"""
-        if self.mp.beams == 1:
-            delta_h = (self.mp.h_e - self.mp.h_a)/self.mp.l1
-            delta_b = (self.mp.b_e - self.mp.b_a)/self.mp.l1
-            l_element = self.mp.l1/self.mp.elements_beam1
+        mp = self.mp
+        mp.update(x)
 
-            for i in range(self.mp.elements_beam1):
-                x[i*2]=delta_b*i*1.5*l_element
-                x[i*2+1]=delta_h*i*1.5*l_element
+        v_parameters = np.zeros(2*(mp['elements_beam1']+mp['elements_beam2']), dtype=object)
+        if mp['beams'] == 1:
+            delta_h = (mp['h_e'] - mp['h_a'])/mp['l1']
+            delta_b = (mp['b_e'] - mp['b_a'])/mp['l1']
+            l_element = mp['l1']/mp['elements_beam1']
+
+            for i in range(mp['elements_beam1']):
+                v_parameters[i*2]=delta_b*(i+1)*l_element+mp['b_a']
+                v_parameters[i*2+1]=delta_h*(i+1)*l_element+mp['h_a']
 
         else:
-            delta_h_beam1 = (self.mp.h_e - self.mp.h_a)/self.mp.l1
-            delta_h_beam2 = -1*(self.mp.h_e - self.mp.h_a)/self.mp.l2
-            delta_b_beam1 = (self.mp.b_e - self.mp.b_a)/self.mp.l1
-            delta_b_beam2 = -1*(self.mp.b_e - self.mp.b_a)/self.mp.l2
-            l_element1 = self.mp.l1/self.mp.elements_beam1
-            l_element2 = self.mp.l2/self.mp.elements_beam2
+            delta_h_beam1 = (mp['h_e'] - mp['h_a'])/mp['l1']
+            delta_h_beam2 = -1*(mp['h_e'] - mp['h_a'])/mp['l2']
+            delta_b_beam1 = (mp['b_e'] - mp['b_a'])/mp['l1']
+            delta_b_beam2 = -1*(mp['b_e'] - mp['b_a'])/mp['l2']
+            l_element1 = mp['l1']/mp['elements_beam1']
+            l_element2 = mp['l2']/mp['elements_beam2']
 
-            for i in range(self.mp.elements_beam1+self.mp.elements_beam2):
-                if i <= self.mp.elements_beam1:
-                    x[i*2].f=delta_b_beam1*((i+0.5)*l_element1)+self.mp.b_a
-                    x[i*2+1].f=delta_h_beam1*((i+0.5)*l_element1)+self.mp.h_a
+            for i in range(mp['elements_beam1']+mp['elements_beam2']):
+                if i < mp['elements_beam1']:
+                    v_parameters[i*2]=delta_b_beam1*((i+1)*l_element1)+mp['b_a']
+                    v_parameters[i*2+1]=delta_h_beam1*((i+1)*l_element1)+mp['h_a']
                 else:
-                    x[i*2].f=delta_b_beam2*((i-self.mp.elements_beam1-0.5)*l_element2)+self.mp.b_e
-                    x[i*2+1].f=delta_h_beam2*((i-self.mp.elements_beam1-0.5)*l_element2)+self.mp.h_e+delta_b_beam1
+                    v_parameters[i*2]=delta_b_beam2*((i-mp['elements_beam1'])*l_element2)+mp['b_e']
+                    v_parameters[i*2+1]=delta_h_beam2*((i-mp['elements_beam1'])*l_element2)+mp['h_e']
+            mp.v_parameters = v_parameters
+            
+            self.create_model(v_parameters)
 
-        return x
+        return v_parameters
 
         
-    def tsb_cove(self, x):
+    def create_cove_tsb(self, x):
         """
         tsb = two spann bar
                          
@@ -136,27 +133,32 @@ class Parametrization:
         #TODO: l_c abfragen ob es ein Vielfaches von der elementlänge ist oder nicht
         # if l_c % l_element:
 
-        delta_h_beam1 = (self.mp.h_e - self.mp.h_a)/(self.mp.l1-self.mp.l_c1)
-        delta_h_beam2 = -1*(self.mp.h_e - self.mp.h_a)/(self.mp.l2-self.mp.l_c2)
-        delta_b_beam1 = (self.mp.b_e - self.mp.b_a)/(self.mp.l1-self.mp.l_c1)
-        delta_b_beam2 = -1*(self.mp.b_e - self.mp.b_a)/(self.mp.l2-self.mp.l_c2)
-        l_element1 = self.mp.l1/self.mp.elements_beam1
-        l_element2 = self.mp.l2/self.mp.elements_beam2
-
-        for i in range(self.mp.elements_beam1+self.mp.elements_beam2):
-            if i <= self.mp.elements_beam1:
-                if i*l_element1 < self.mp.l_c1:
-                    x[i*2]=self.mp.b_a 
-                    x[i*2+1]=self.mp.h_a 
+        mp = self.mp
+        mp.update(x)
+        v_parameters = np.zeros(2*(mp['elements_beam1']+mp['elements_beam2']), dtype=object)
+        delta_h_beam1 = (mp['h_e'] - mp['h_a'])/mp['lc1']
+        delta_h_beam2 = -1*(mp['h_e'] - mp['h_a'])/mp['lc2']
+        delta_b_beam1 = (mp['b_e'] - mp['b_a'])/mp['lc1']
+        delta_b_beam2 = -1*(mp['b_e'] - mp['b_a'])/mp['lc2']
+        l_element1 = mp['l1']/mp['elements_beam1']
+        l_element2 = mp['l2']/mp['elements_beam2']
+        
+        for i in range(mp['elements_beam1']+mp['elements_beam2']):
+            if i <= mp['elements_beam1']:
+                if i*l_element1 <= (mp['l1']-mp['lc1']):
+                    v_parameters[i*2]=mp['b_a'] 
+                    v_parameters[i*2+1]=mp['h_a'] 
                 else:
-                    x[i*2]=delta_b_beam1*i*1.5*l_element1
-                    x[i*2+1]=delta_h_beam1*i*1.5*l_element1
+                    v_parameters[i*2]=delta_b_beam1*((i+1)*l_element1)+mp['b_a']
+                    v_parameters[i*2+1]=delta_h_beam1*(i*l_element1-(mp['l1']-mp['lc1']))+mp['h_a']
             else:
-                if i*l_element2 < (self.mp.l2-self.mp.l_c2):
-                    x[i*2]=delta_b_beam2*i*1.5*l_element2
-                    x[i*2+1]=delta_h_beam2*i*1.5*l_element2
+                if (i-mp['elements_beam1'])*l_element2 < mp['lc2']:
+                    v_parameters[i*2]=delta_b_beam2*((i-mp['elements_beam1'])*l_element2)+mp['b_e']
+                    v_parameters[i*2+1]=delta_h_beam2*((i-mp['elements_beam1'])*l_element2)+mp['h_e']
                 else:
-                    x[i*2]=self.mp.b_a 
-                    x[i*2+1]=self.mp.h_a       
-            
-            return x
+                    v_parameters[i*2]=mp['b_a'] 
+                    v_parameters[i*2+1]=mp['h_a']       
+        mp.v_parameters = v_parameters
+        
+        self.create_model(v_parameters)
+        return v_parameters

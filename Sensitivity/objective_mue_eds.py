@@ -5,7 +5,7 @@ of the mue eds
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.designing import Design
 from Concrete_Design.values import Values
-from Sensitivity.hyperjetextr import HyperJetExtr
+
 
 def objective_mue_eds(x, mp):
     
@@ -37,4 +37,4 @@ def objective_mue_eds(x, mp):
     
     f = max(mue_eds)
     
-    return HyperJetExtr(f)
+    return f

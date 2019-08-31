@@ -19,6 +19,7 @@ from matplotlib import cm
 
 from FE_code.model import Model
 from FE_code.beam_column_element import BeamColumnElement
+import hyperjet as hj
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
@@ -69,6 +70,13 @@ def x_z_edge(x_range, y_range, z_range):
             ax.plot_wireframe(xx, y2, zz, color="darkgrey")
             ax.plot_surface(xx, y2, zz, color="blue", alpha=0.5)
 
+def check_parameters(v_parameters):
+
+    for i in range(len(v_parameters)):
+        if type(v_parameters[i])==hj.HyperJet:
+            v_parameters[i]=v_parameters[i].f
+
+    return v_parameters
 
 
 def plot_opti_3d(x, f, args):
@@ -77,17 +85,19 @@ def plot_opti_3d(x, f, args):
     x_sys = list()
     b_sys = list()
     h_sys = list()
+
+    v_parameters = check_parameters(args[1].v_parameters)
     
-    for node in args[1].model.nodes:
+    for node in args[1].parameters['model'][0].nodes:
         x_nodes.append(node._x)
 
-    for i in range(len(x)):
+    for i in range(len(v_parameters)):
         if i % 2 == 0:
-            b_sys.append(x[i].f)
+            b_sys.append(v_parameters[i])
         else:
-            h_sys.append(x[i].f)
+            h_sys.append(v_parameters[i])
     
-    for i, ele in enumerate(args[1].model.elements):
+    for i, ele in enumerate(args[1].parameters['model'][0].elements):
         if type(ele)==BeamColumnElement:
             _current_vector = ele.get_vector()
         
@@ -97,14 +107,15 @@ def plot_opti_3d(x, f, args):
         
             normalized_vector = _normal_vector/np.linalg.norm(_normal_vector)
 
-            v_b = normalized_vector*(x[i*2].f)
-            v_h = normalized_vector*(x[i*2+1].f)
+            v_b = normalized_vector*(v_parameters[i*2])
+            v_h = normalized_vector*(v_parameters[i*2+1])
            
             x_range = np.array([x_nodes[i], x_nodes[i+1]])
             y_range = np.array([-v_b[1]/2, v_b[1]/2])
             #z_range = np.array([-v_h[1]/2, v_h[1]/2])
             z_range = np.array([-v_h[1], 0])
-            
+
+                        
             x_y_edge(x_range, y_range, z_range)
             y_z_edge(x_range, y_range, z_range)
             x_z_edge(x_range, y_range, z_range)

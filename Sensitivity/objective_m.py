@@ -3,7 +3,7 @@ for the bending moment
 """
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.designing import Design
-from Sensitivity.hyperjetextr import HyperJetExtr
+
 
 def objective_m(x, mp):
     
@@ -24,4 +24,4 @@ def objective_m(x, mp):
 
     f = max([abs(x) for x in m]) 
 
-    return HyperJetExtr(f)
+    return f

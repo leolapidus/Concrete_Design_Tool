@@ -5,7 +5,6 @@ longitudinal reinforcement
 from FE_code.beam_column_element import BeamColumnElement
 from Concrete_Design.designing import Design
 from Sensitivity.model_parameters import ModelParameters
-from Sensitivity.hyperjetextr import HyperJetExtr
 
 
 
@@ -37,8 +36,7 @@ def objective_asw(x, mp, **kwargs):
             f.append([i[1].f, i[0]])
         f = max(f)
         f = asw[f[1]]
-        return HyperJetExtr(f)
-        
+        return f        
     else:
         for ele in mp.model.elements:
             if type(ele)==BeamColumnElement:

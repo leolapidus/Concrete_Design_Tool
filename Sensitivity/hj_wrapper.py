@@ -24,8 +24,8 @@ class HyperJetResponseWrapper():
             cur = []
             past = []
             for i in range(int(len(self.current_x))):
-                cur.append(self.current_x[i].f)
-                past.append(x[i].f)
+                cur.append(self.current_x[i][0].f)
+                past.append(x[i][0].f)
         return not np.allclose(past, cur, rtol=1e-12, atol=1e-12)
 
 

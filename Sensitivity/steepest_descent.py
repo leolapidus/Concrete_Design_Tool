@@ -55,17 +55,22 @@ def steepest_descent(f, x, solvertype, args, g, h):
         coord = []
         fcoord = []
         miter = 1
-        step = 0.02/miter
-        max_int = 1
+        step = 0.01/miter
+        max_int = 20
         fcoord.append(f(x,args))
         i_coord = len(x)
         for i in range(int(len(x)/2)):
-            coord.append((x[i*2].f, x[i*2+1].f))
+            coord.append((x[i*2][0].f, x[i*2+1][0].f))
         #print(x, 0)
         
         while miter <= max_int:
-            p=[step*d for d in g(x,args)]
-            temp=[x-p for x, p in zip(x,p)]
+            print(g(x,args))
+            temp = [x[i][0]-step*g(x,args)[i] for i in range(len(x))]
+            for i in range(len(temp)):
+                temp[i]=tuple((temp[i], True))
+            
+            # p=[step*d for d in g(x,args)]
+            # temp=[x-p for x, p in zip(x,p)]
             
             
             if np.abs(np.array(f(x,args))-np.array(f(temp,args))).all()>0.0000001:
@@ -74,8 +79,8 @@ def steepest_descent(f, x, solvertype, args, g, h):
                 break
             fcoord.append(f(x,args))
             for i in range(int(len(x)/2)):
-                coord.append((x[i*2].f, x[i*2+1].f))
-            print(x, miter)
+                coord.append((x[i*2][0].f, x[i*2+1][0].f))
+            print(x, f(x,args),miter)
             miter += 1
 
         #plot_opti_as(x,f(x,args),args)
