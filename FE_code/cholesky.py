@@ -7,6 +7,13 @@ def _cholesky(A):
     L = np.zeros((n, n), dtype=object)
 
     for i in range(n):
+        if A[i,i]<0.00:
+            raise ValueError(f'Element Stiffness Matrix has negativ Values on the diagonal {A}')
+
+    if np.all(A.diagonal()==0.00):
+        raise ValueError(f'Element Stiffness Matrix has zeros on the diagonal {A}')
+
+    for i in range(n):
         for k in range(i + 1):
             tmp_sum = sum(L[i, j] * L[k, j] for j in range(k))
             

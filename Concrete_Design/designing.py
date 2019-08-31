@@ -10,6 +10,7 @@ from Concrete_Design.bending_without_n_iteration import bending_without_n_iterat
 from Concrete_Design.bending_with_n import bending_with_n
 from Concrete_Design.shear import shear_reinforcement
 from Concrete_Design.debug_print import debug
+from Sensitivity.hyperjetextr import HyperJetExtr
 
 class Design:
     """
@@ -60,12 +61,13 @@ class Design:
             As = bending_without_n_table(self.model, self.values, self.concrete_type, self.exp)
         elif value == 'iteration':
             As = bending_without_n_iteration(self.model, self.values, self.concrete_type, self.exp)
-
+        
         #add reinforcement to element information 
 
         for i, ele in enumerate(self.model.elements):
             if type(ele)==BeamColumnElement:
                 ele.bending_reinforcement.append(As[i])
+                # ele.bending_reinforcement.append(HyperJetExtr(As[i]))
         
         return As
 

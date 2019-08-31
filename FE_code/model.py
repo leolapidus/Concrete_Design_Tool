@@ -68,6 +68,17 @@ class Model:
     def invalidate_assembler(self):
         self._assembler = None
 
+    def reset_model(self):
+        self._assembler = None
+        self.postprocessing_done = False
+        self.material_parameters_set = False
+
+        # Initialize Attributes
+        self._nodes = dict()
+        self._elements = dict()
+        self.dirichlet_conditions = dict()
+        self.neumann_conditions = dict()
+
     @property
     def assembler(self):
         if self._assembler is None:
@@ -165,7 +176,7 @@ class Model:
 
         self._nodes[id] = Node(id, x, y)
 
-    def add_beam(self, id, node_ids, element_type):
+    def add_beam(self, id, node_ids, element_type, E, b, h):
         """Add a two dimentional beam column element to the model.
 
         Parameters
@@ -193,49 +204,50 @@ class Model:
         if element_type != 'beam':
             raise NotImplementedError(f'Element type {element_type} is not implemented')
             
-        self._elements[id] = BeamColumnElement(id, nodes)
+        self._elements[id] = BeamColumnElement(id, nodes, E, b, h)
         
-    def set_material_parameters(self, E, b, h):
-        """
-        set the material parameter Young's modulus, thickness and Poissons Ratio
+    # def set_material_parameters(self, structural_element_id, E, b, h):
 
-        Parameters
-        ----------
-        E : float
-            Young's modulus
-        t : float
-            Thickness
-        prxy : float
-            Poisson's ratio
-        """
-        for element in self.elements:
-            if type(element)==BeamColumnElement:
-                element.E = E
-                element.b = b
-                element.h = h
-        self.material_parameters_set = True
+    #     """
+    #     set the material parameter Young's modulus, thickness and Poissons Ratio
+
+    #     Parameters
+    #     ----------
+    #     E : float
+    #         Young's modulus
+    #     t : float
+    #         Thickness
+    #     prxy : float
+    #         Poisson's ratio
+    #     """
+    #     for element in self.elements:
+    #         if type(element)==BeamColumnElement:
+    #             element.E = E
+    #             element.b = b
+    #             element.h = h
+    #     self.material_parameters_set = True
 
 
-    def get_material_parameters(self):
-        """
-        get the material parameter Young's modulus, thickness and Poissons Ratio
+    # def get_material_parameters(self):
+    #     """
+    #     get the material parameter Young's modulus, thickness and Poissons Ratio
 
-        Returns
-        -------
-        E : float
-            Young's modulus
-        t : float
-            Thickness
-        prxy : float
-            Poisson's ratio
-        """
-        if self.material_parameters_set:
-            for element in self.elements:
-                if type(element)==BeamColumnElement:
-                    E = element.E
-                    b = element.b
-                    h = element.h
-                    return E, b, h
+    #     Returns
+    #     -------
+    #     E : float
+    #         Young's modulus
+    #     t : float
+    #         Thickness
+    #     prxy : float
+    #         Poisson's ratio
+    #     """
+    #     if self.material_parameters_set:
+    #         for element in self.elements:
+    #             if type(element)==BeamColumnElement:
+    #                 E = element.E
+    #                 b = element.b
+    #                 h = element.h
+    #                 return E, b, h
 
 
     def add_dirichlet_condition(self, dof, value):
@@ -291,7 +303,7 @@ class Model:
             self._elements[id] = SingleLoad(id, self._nodes[node_id], **load_types)
             self.neumann_conditions[id] = self._elements[id]
            
-    def add_distributed_load(self, id, structural_element_id, load, rho, b, h):
+    def add_distributed_load(self, id, structural_element_id, load, rho):
         """Add an element load to the model.
 
         .. note::
@@ -325,7 +337,7 @@ class Model:
         structural_element = self.get_element(structural_element_id)
                 
         if self.analysis_type=='beam':
-            self._elements[id] = DistributedLoad(id, structural_element, load, rho, b, h)
+            self._elements[id] = DistributedLoad(id, structural_element, load, rho)
             self.neumann_conditions[id] = self._elements[id]
             structural_element.load_elements.append(self._elements[id])
             if len(structural_element.load_elements)>1:

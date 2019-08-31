@@ -1,57 +1,93 @@
+import numpy as np
+
 from FE_code.model import Model
-from Visualization.plot import Plot2D
+
 from Concrete_Design.designing import Design
 from Concrete_Design.values import Values
 
-import numpy as np
-
-from Sensitivity.model_parameters import ModelParameters
-from Sensitivity.sensitivity_as import sensitivity_as
+from Visualization.plot import Plot2D
 from Visualization.plot_sensitivity import visualization_sensitivity_as
-from Sensitivity.sensitivtiy_asw import sensitivity_asw
 from Visualization.plot_sensitivity import visualization_sensitivity_asw
 
+import hyperjet as hj
+
+from Sensitivity.hj_wrapper import HyperJetResponseWrapper
+from Sensitivity.model_parameters import ModelParameters
+from Sensitivity.sensitivity_as import sensitivity_as
+from Sensitivity.sensitivtiy_asw import sensitivity_asw
 from Sensitivity.steepest_descent import steepest_descent
-from Sensitivity.steepest_descent_copy import steepest_descent_copy
 from Sensitivity.objective_as import objective_as
 from Sensitivity.objective_mue_eds import objective_mue_eds
-from Sensitivity.hj_wrapper import HyperJetResponseWrapper
-import scipy.optimize
+from Sensitivity.objective_asw import objective_asw
+from Sensitivity.objective_m import objective_m
 
-import hyperjet as hj
+from Parametrization.parametrization import Parametrization
+
+import scipy.optimize
 
 #================
 #model definition
 #================
 mp = ModelParameters()
-mp.model = Model(analysis_type='beam')
-mp.concrete_type = 'c2530'
-mp.expositionclass = 'XC3'
-b0 = 1.0
-h0 = 1.0
-mp.load = -100
-mp.calculation_as = 'table'
-mp.younges_modulus = Values().concrete(mp.concrete_type)['Ecm']
-solvertype = 'linear'
-f = HyperJetResponseWrapper(objective_as)
-selfweight = True
-plot_design_space = False
-use_hyperjet = True
+mp.add_parameter("model", Model(analysis_type='beam'))
+mp.add_parameter("concrete_type", 'c2530')
+mp.add_parameter("expositionclass", 'XC3')
+mp.add_parameter("load", -100)
+mp.add_parameter("calculation_as", 'table')
+mp.add_parameter("younges_modulus", Values().concrete(mp.concrete_type)['Ecm'])
+mp.add_parameter("l1", 4)
+mp.add_parameter("l2", 4.0)
+mp.add_parameter("h_a", 1.0, is_variable=True)
+mp.add_parameter("h_e", 1.0, is_variable=True)
+mp.add_parameter("b_a", 4)
+mp.add_parameter("b_e", 4.0)
+mp.model                    = Model(analysis_type='beam')
 
-#Beam 1
-#------
-for i in range(5):
-    mp.model.add_node(id=i+1, x=i*0.5, y=0.0)
+mp.concrete_type            = 'c2530'
+mp.expositionclass          = 'XC3'
+mp.load                     = -100
+mp.calculation_as           = 'table'
+mp.younges_modulus          = Values().concrete(mp.concrete_type)['Ecm']
+mp.l1                       = [4, False]
+mp.l2                       = [4, False]
+mp.h_a                      = [1.0, True]
+mp.h_e                      = [1.0, True]
+mp.b_a                      = [1.0, False]
+mp.b_e                      = [1.0, False]
+mp.beams                    = [2, False]
+mp.elements_beam1           = [20, False] 
+mp.elements_beam2           = [20, False]
+mp.l_c1                     = [0, False]
+mp.l_c2                     = [0, False]
+a                           = []
+solvertype                  = 'linear'
+f                           = HyperJetResponseWrapper(objective_as)
+selfweight                  = True
+plot_design_space           = False
+use_hyperjet                = True
+parametrization             = Parametrization(mp)
 
-for i in range(4):      
-    mp.model.add_beam(id=i+1, node_ids=[i+1, i+2], element_type='beam')
+mp.constants()
 
 
-#Dirichlet conditions
-#--------------------
-mp.model.add_dirichlet_condition(dof=(1, 'u'), value=0)
-mp.model.add_dirichlet_condition(dof=(1, 'v'), value=0)
-mp.model.add_dirichlet_condition(dof=(5, 'v'), value=0)
+
+# #Beam 1
+# #------
+# for i in range(mp.nodes):
+#     mp.model.add_node(id=i+1, x=i*0.25, y=0.0)
+
+
+
+
+
+
+
+# #Dirichlet conditions
+# #--------------------
+# mp.model.add_dirichlet_condition(dof=(1, 'u'), value=0)
+# mp.model.add_dirichlet_condition(dof=(1, 'v'), value=0)
+# mp.model.add_dirichlet_condition(dof=(14, 'v'), value=0)
+# mp.model.add_dirichlet_condition(dof=(27, 'v'), value=0)
 
 
 #=========================
@@ -81,13 +117,17 @@ if selfweight:
     mp.rho =25
 
 if use_hyperjet:
-    b0 = hj.HyperJet(b0, [1,0])
-    h0 = hj.HyperJet(h0, [0,1])
-    x=[b0, h0]
+    # b0 = hj.HyperJet(b0, [1,0])
+    # h0 = hj.HyperJet(h0, [0,1])
+    #create vector of Parameters for all elements
+    # for i in range(mp.nodes-1):
+    #     a.append([b0, h0])
+    a = parametrization.vector_of_parameters(b0,h0)
     
 
-steepest_descent(f.f, x, solvertype, args=(f, mp), g=f.g, h=f.h)
-steepest_descent_copy('as', x, 'linear', mp)
+steepest_descent(f.f, a, solvertype, args=(f, mp, parametrization), g=f.g, h=f.h)
+#scipy.optimize.minimize(f.f, x, args=(f, mp), method='SLSQP', jac=f.g, hess=f.h)
+
 
 
 

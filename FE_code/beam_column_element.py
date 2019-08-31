@@ -37,7 +37,7 @@ class BeamColumnElement(Element):
         if the nodes given are not of class `Node`
     """
 
-    def __init__(self, id, nodes):
+    def __init__(self, id, nodes, E, b, h):
         """Creates a new element
         Parameters
         ----------
@@ -53,9 +53,9 @@ class BeamColumnElement(Element):
                 raise RuntimeError('Error in creating a beam column element. Nodes must be a list of objects of class Node')
         self.id = id
         self.nodes = nodes
-        self._E = 0
-        self._b = 0
-        self._h = 0
+        self._E = E
+        self._b = b
+        self._h = h
         self.local_internal_forces = list ()
         self.global_internal_forces = list ()
         self.load_elements = list()
